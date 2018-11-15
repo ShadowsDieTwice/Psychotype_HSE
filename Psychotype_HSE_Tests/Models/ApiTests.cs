@@ -10,6 +10,8 @@ namespace Psychotype.Models.Tests
         [TestMethod()]
         public void GetTest()
         {
+            var api = Api.Get();
+
             Assert.Fail();
         }
     }

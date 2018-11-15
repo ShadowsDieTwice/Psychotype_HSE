@@ -175,7 +175,7 @@
     <Compile Include="Models\Components\Client.cs" />
     <Compile Include="Models\Components\Community.cs" />
     <Compile Include="Models\Components\User.cs" />
-    <Compile Include="Models\VkApi.cs" />
+    <Compile Include="Models\Api.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
