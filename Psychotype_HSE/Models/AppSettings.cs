@@ -12,16 +12,15 @@ namespace Psychotype.Models
         /// </summary>
         public static ulong ApplicationId { get; set; }
         /// <summary>
-        /// Login of user application owner 
+        /// Access token for VK API
         /// </summary>
-        public static string Login { get; set; }
-        /// <summary>
-        /// Password of user application owner
-        /// </summary>
-        public static string Password { get; set; }
+        public static string AccessToken { get; set; }
+
 
         static AppSettings()
-        {
+        { 
+            ApplicationId = 6752080;
+            AccessToken = "331381e0a41bfa1b04ab54ef7a9927e2efeda6b46aca936edd372feee7ab200b9629c62a165924b11074f";
             // Here we need to initialize all properties with fake account information
         }
 

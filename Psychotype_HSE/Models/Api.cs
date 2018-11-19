@@ -28,8 +28,7 @@ namespace Psychotype.Models
             api.Authorize(new ApiAuthParams
             {
                 ApplicationId = AppSettings.ApplicationId,
-                Login = AppSettings.Login, 
-                Password = AppSettings.Password, 
+                AccessToken = AppSettings.AccessToken,
                 Settings = Settings.All
             });
 
