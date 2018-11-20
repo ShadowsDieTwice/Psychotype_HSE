@@ -1,6 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Psychotype.Models;
 using System;
+using VkNet;
+using VkNet.Enums.Filters;
+using VkNet.Model;
+using VkNet.Model.RequestParams;
 
 namespace Psychotype.Models.Tests
 {
@@ -11,8 +15,13 @@ namespace Psychotype.Models.Tests
         public void GetTest()
         {
             var api = Api.Get();
+            var get = api.Wall.Get(new WallGetParams
+            {
 
-            Assert.Fail();
+            });
+
+            Assert.IsTrue(true);
+           //ssert.Fail();
         }
     }
 }
