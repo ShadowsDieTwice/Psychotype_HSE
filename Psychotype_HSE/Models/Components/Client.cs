@@ -19,17 +19,17 @@ namespace Psychotype.Models.Components
         /// <summary>
         /// Id of client in Vk base
         /// </summary>
-        public ulong VkId { get; set; }
+        public long VkId { get; set; }
 
         /// <summary>
         /// This method gets VkId from Link to client
         /// </summary>
         /// <returns> Id of client </returns>
-        protected ulong GetIdFromLink()
+        protected long GetIdFromLink()
         {
             var api = Api.Get();
-            var user = api.Users.Get(new long[] { (long)VkId }).FirstOrDefault();
-            return (ulong)user.Id;
+            var user = api.Users.Get(new long[] { VkId }).FirstOrDefault();
+            return user.Id;
         }
 
         /// <summary>
