@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VkNet.Model;
+using VkNet.Enums.Filters;
 
 namespace Psychotype.Models.Components
 {
@@ -25,8 +27,9 @@ namespace Psychotype.Models.Components
         /// <returns> Id of client </returns>
         protected ulong GetIdFromLink()
         {
-            // TODO: Implement method
-            throw new NotImplementedException();
+            var api = Api.Get();
+            var user = api.Users.Get(new long[] { (long)VkId }).FirstOrDefault();
+            return (ulong)user.Id;
         }
 
         /// <summary>
