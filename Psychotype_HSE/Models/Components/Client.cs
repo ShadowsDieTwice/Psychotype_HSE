@@ -28,7 +28,7 @@ namespace Psychotype.Models.Components
         protected long GetIdFromLink()
         {
             var api = Api.Get();
-            var user = api.Users.Get(new long[] { VkId }).FirstOrDefault();
+            var user = api.Users.Get(new string[] { Link }).FirstOrDefault();
             return user.Id;
         }
 
