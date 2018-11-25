@@ -20,7 +20,7 @@ namespace Psychotype.Models
         static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "ae2f7da77aa4522f30a938410fafccac56861ec7cd8affaa7d613554015a7d8bf40b1065566c48cd63d50";
+            AccessToken = "a978bcd5c251c73bbca667124829b6ffb6553058b5145943ed725df37ab7ea3066f90f3ca38a13350e338";
             // Here we need to initialize all properties with fake account information
         }
 

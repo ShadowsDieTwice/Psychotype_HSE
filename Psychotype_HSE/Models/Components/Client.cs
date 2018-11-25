@@ -13,7 +13,7 @@ namespace Psychotype.Models.Components
     public abstract class Client
     {
         /// <summary>
-        /// Link to the clients wall
+        /// Link to the client's wall. Format: id123456, public123456, short_name etc.
         /// </summary>
         public string Link { get; set; }
         /// <summary>
@@ -28,8 +28,11 @@ namespace Psychotype.Models.Components
         protected long GetIdFromLink()
         {
             var api = Api.Get();
-            var user = api.Users.Get(new string[] { Link }).FirstOrDefault();
-            return user.Id;
+            //Возвращает по короткому имени объект(может быть пользователь, группа или приложение)
+            var obj = api.Utils.ResolveScreenName(Link);
+            if (obj == null)
+                throw new NullReferenceException("There is no page with link: " + Link);
+            return (long)obj.Id;
         }
 
         /// <summary>

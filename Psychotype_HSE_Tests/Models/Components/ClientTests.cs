@@ -18,20 +18,32 @@ namespace Psychotype.Models.Components.Tests
             Assert.AreEqual(cl.VkId, 1);
             cl = new User("maxim_rachinskiy");
             Assert.AreEqual(cl.VkId, 52372015);
-          //  cl = new Community("team");
-           
+
+            cl = new Community("team");
+            Assert.AreEqual(cl.VkId, 22822305);
+            cl = new Community("public74284053");
+            Assert.AreEqual(cl.VkId, 74284053);           
+        }
+
+        [TestMethod()]
+        [ExpectedException(typeof(NullReferenceException),
+    "There is no page with link: net_takogo_pablica_i_ya_nadeyus_ne_budet_123")]
+        public void GetIdFromLinkTestNullExeption()
+        {
+            //Throws NullReferenceException
+            Client cl = new Community("net_takogo_pablica_i_ya_nadeyus_ne_budet_123");
         }
 
         [TestMethod()]
         public void GetAllPostsTest()
         {
-            //Assert.Fail();
+            Assert.Fail();
         }
 
         [TestMethod()]
         public void GetMostPopularWordsOnWallTest()
         {
-            //Assert.Fail();
+            Assert.Fail();
         }
     }
 }
