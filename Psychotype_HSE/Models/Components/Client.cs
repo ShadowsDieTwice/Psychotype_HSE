@@ -65,7 +65,7 @@ namespace Psychotype.Models.Components
             //нужно как-то ловить exception, если нет постов
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
             Dictionary<string, int> popularWords = new Dictionary<string, int>();
-            char[] separators = { ' ', '\n', '\t' };
+            char[] separators = { ' ', '\n', '\t', ',', '.', '!', '?' };
             foreach (Post post in posts)
             {
                 string[] words = post.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
