@@ -11,7 +11,5 @@ namespace Psychotype.Models.Components
             Link = link;
             VkId = GetIdFromLink();
         }
-
-        
     }
 }

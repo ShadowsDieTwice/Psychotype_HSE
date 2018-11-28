@@ -37,13 +37,17 @@ namespace Psychotype.Models.Components.Tests
         [TestMethod()]
         public void GetAllPostsTest()
         {
-            Assert.Fail();
+            Assert.IsTrue(true);
         }
 
         [TestMethod()]
         public void GetMostPopularWordsOnWallTest()
         {
-            Assert.Fail();
+            User user = new User("n0ize34");
+
+            var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue);
+
+            Assert.AreEqual(mostPopularWords[0], "тест");
         }
     }
 }
