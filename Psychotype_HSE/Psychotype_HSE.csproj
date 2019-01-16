@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -181,6 +182,22 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Template\src\css\index.css" />
+    <Content Include="Content\Template\index.html" />
+    <Content Include="Content\Template\src\js\script.js" />
+    <Content Include="Content\Template\src\img\079dd0ed-aa47-4dde-aae9-60ba7ce0967e.jpg" />
+    <Content Include="Content\Template\src\img\69f20fde-1e39-4bbe-846f-62f05abbb101.jpg" />
+    <Content Include="Content\Template\src\img\7efa72c9-1870-4c66-81f7-8dd444d0509b.jpg" />
+    <Content Include="Content\Template\src\img\baf0b313-59b5-4731-ad85-a5862cf77a89.jpg" />
+    <Content Include="Content\Template\src\img\cb91e5e4-8fbc-40cf-8f8a-93e398f367ba.jpg" />
+    <Content Include="Content\Template\src\img\e2be5752-8d22-4d7f-8779-ac7c07e957c5.jpg" />
+    <Content Include="Content\Template\src\img\expand_arrow1600.png" />
+    <Content Include="Content\Template\src\img\graph.png" />
+    <Content Include="Content\Template\src\img\heart-rate-459225_960_720.png" />
+    <Content Include="Content\Template\src\img\latency.png" />
+    <Content Include="Content\Template\src\img\palm-scan.png" />
+    <Content Include="Content\Template\src\img\robo-logo-black.png" />
+    <Content Include="Content\Template\src\img\test_partial_passed1600.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -190,6 +207,11 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="ClassDiagram1.cd" />
+    <Content Include="Content\Template\index.cshtml" />
+    <Content Include="Content\Template\src\fonts\Andika-R.ttf" />
+    <Content Include="Content\Template\src\fonts\beer money.ttf" />
+    <Content Include="Content\Template\src\fonts\Molot.otf" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -216,6 +238,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\DefaultTemplate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -224,7 +247,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
@@ -242,7 +267,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>31459</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

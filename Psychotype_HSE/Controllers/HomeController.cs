@@ -26,5 +26,12 @@ namespace Psychotype_HSE.Controllers
 
             return View();
         }
+
+        public ActionResult DefaultTemplate()
+        {
+
+            return View();
+        }
+
     }
 }
