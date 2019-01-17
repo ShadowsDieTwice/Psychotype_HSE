@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VkNet.Model;
+using VkNet.Enums.Filters;
 
 namespace Psychotype.Models.Components
 {
@@ -11,22 +13,26 @@ namespace Psychotype.Models.Components
     public abstract class Client
     {
         /// <summary>
-        /// Link to the clients wall
+        /// Link to the client's wall. Format: id123456, public123456, short_name etc.
         /// </summary>
         public string Link { get; set; }
         /// <summary>
         /// Id of client in Vk base
         /// </summary>
-        public ulong VkId { get; set; }
+        public long VkId { get; set; }
 
         /// <summary>
         /// This method gets VkId from Link to client
         /// </summary>
         /// <returns> Id of client </returns>
-        protected ulong GetIdFromLink()
+        protected long GetIdFromLink()
         {
-            // TODO: Implement method
-            throw new NotImplementedException();
+            var api = Api.Get();
+            //Возвращает по короткому имени объект(может быть пользователь, группа или приложение)
+            var obj = api.Utils.ResolveScreenName(Link);
+            if (obj == null)
+                throw new NullReferenceException("There is no page with link: " + Link);
+            return (long)obj.Id;
         }
 
         /// <summary>
