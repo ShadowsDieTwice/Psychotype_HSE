@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Models\ApiTests.cs" />
     <Compile Include="Models\Components\ClientTests.cs" />
+    <Compile Include="Models\StemmerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

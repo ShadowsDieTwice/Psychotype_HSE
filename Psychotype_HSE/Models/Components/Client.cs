@@ -91,7 +91,7 @@ namespace Psychotype.Models.Components
     }
 
     //Стеммер Портера
-    class Stemmer
+    public class Stemmer
     {
         private static Regex PERFECTIVEGROUND = new Regex("((ив|ивши|ившись|ыв|ывши|ывшись)|((<;=[ая])(в|вши|вшись)))$");
         private static Regex REFLEXIVE = new Regex("(с[яь])$");
