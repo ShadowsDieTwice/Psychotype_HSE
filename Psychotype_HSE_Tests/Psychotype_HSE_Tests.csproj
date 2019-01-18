@@ -86,6 +86,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Models\ApiTests.cs" />
+    <Compile Include="Models\Components\ClientTests.cs" />
     <Compile Include="Models\PsychotypeContextTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
