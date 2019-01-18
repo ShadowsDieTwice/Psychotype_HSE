@@ -58,34 +58,34 @@ namespace Psychotype.Models.Components
         }
 
         /// <summary>
-        /// This method gets all most popular words on wall
+        /// This method gets all most popular words (in groups) on wall
+        /// Each group is like (cat, cats, catty)
         /// Except words in DataBase (like "по", "с" and etc)
+        /// Works only with Russian words
         /// </summary>
         /// <returns> List of words </returns>
-        public virtual List<string> GetMostPopularWordsOnWall(DateTime timeFrom, DateTime timeTo, int numberOfWords = 10)
+        public virtual List<List<string>> GetMostPopularWordsOnWall(DateTime timeFrom, DateTime timeTo, int numberOfWords = 10)
         {
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            Dictionary<string, int> popularWords = new Dictionary<string, int>();
+            Dictionary<string, List<string>> popularWords = new Dictionary<string, List<string>>();
             char[] separators = { ' ', '\n', '\t', ',', '.', '!', '?' };
             foreach (Post post in posts)
             {
                 string[] words = post.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-                // TODO: Develop a method how to count similar words as one
-                // TODO: Remove useless words from our set
                 foreach (string word in words)
                 {
                     if (word.Length > 2) //чтобы убрать всякие предлоги и тд
                     {
                         string key = Stemmer.GetTheBase(word);
-                        if (popularWords.ContainsKey(key))
-                            popularWords[key]++;
-                        else
-                            popularWords.Add(key, 0);
-                    }
+	                    if (!popularWords.ContainsKey(key))
+							popularWords.Add(key, new List<string>());
+
+	                    popularWords[key].Add(word);
+					}
                 }
             }
 
-            var popularKeys = popularWords.OrderByDescending(pair => pair.Value).Select(pair => pair.Key);
+            var popularKeys = popularWords.OrderByDescending(pair => pair.Value.Count).Select(pair => pair.Value);
             return popularKeys.Take(numberOfWords).ToList();
         }
     }

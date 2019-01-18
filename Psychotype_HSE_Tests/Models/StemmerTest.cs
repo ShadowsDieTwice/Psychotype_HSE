@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Psychotype_HSE_Tests.Models
 {
     [TestClass()]
-    class StemmerTest
+    public class StemmerTest
     {
         [TestMethod()]
         public void GetTheBaseTest()
@@ -32,5 +32,25 @@ namespace Psychotype_HSE_Tests.Models
             Assert.AreEqual(4, popularWords["вышк"]);
             Assert.AreEqual(4, popularWords["тест"]);
         }
-    }
+
+	    [TestMethod()]
+	    public void GetGetMostPopularWordsOnWallTest()
+	    {
+		    var maxim = new User("maxim_rachinskiy");
+		    Assert.AreEqual(maxim.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue).Count(), 0);
+
+		    var artem = new User("n0ize34");
+		    Assert.IsTrue(artem.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue)
+			    .Any(group => group.Contains("вышка")));
+
+		    foreach (var group in artem.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue))
+		    {
+			    Console.WriteLine($"Count in group: {group.Count}");
+			    foreach (var word in group)
+			    {
+				    Console.WriteLine("\t" + word);
+			    }
+		    }
+	    }
+	}
 }
