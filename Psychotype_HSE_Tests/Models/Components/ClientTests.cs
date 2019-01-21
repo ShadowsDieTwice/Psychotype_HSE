@@ -47,7 +47,7 @@ namespace Psychotype.Models.Components.Tests
 
             var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue);
 
-            Assert.AreEqual(mostPopularWords[0], "тест");
+            Assert.IsTrue(mostPopularWords[0].Contains("тест"));
         }
     }
 }
