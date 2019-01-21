@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Psychotype_HSE.Models.Components;
 
 namespace Psychotype_HSE_Tests.Models
 {
@@ -18,19 +19,20 @@ namespace Psychotype_HSE_Tests.Models
             //var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue);
             //Assert.AreEqual(mostPopularWords[0], "тест");
             Dictionary<string, int> popularWords = new Dictionary<string, int>();
-            string str = "вышка вышку вышке вышки тест тесты тесту";
+            string str = "вышка вышку вышке вышки тест тесты тесту test";
             string[] words = str.Split(' ');
             foreach (string word in words)
             {
-                string key = Stemmer.GetTheBase(word);
+                string key = RussianStemmer.GetTheBase(word);
                 if (popularWords.ContainsKey(key))
                     popularWords[key]++;
                 else
-                    popularWords.Add(key, 0);
+                    popularWords.Add(key, 1);
             }
-            Assert.AreEqual(2, popularWords.Count);
+            Assert.AreEqual(3, popularWords.Count);
             Assert.AreEqual(4, popularWords["вышк"]);
             Assert.AreEqual(3, popularWords["тест"]);
+	        Assert.AreEqual(1, popularWords["test"]);
         }
 
 	    [TestMethod()]
