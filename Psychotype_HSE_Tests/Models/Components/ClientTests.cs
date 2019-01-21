@@ -27,7 +27,7 @@ namespace Psychotype.Models.Components.Tests
 
         [TestMethod()]
         [ExpectedException(typeof(NullReferenceException),
-    "There is no page with link: net_takogo_pablica_i_ya_nadeyus_ne_budet_123")]
+        "There is no page with link: net_takogo_pablica_i_ya_nadeyus_ne_budet_123")]
         public void GetIdFromLinkTestNullExeption()
         {
             //Throws NullReferenceException

@@ -1,31 +1,147 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿
+@{
+    Layout = null;
+    ViewBag.Title = "DefaultTemplate";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+        @@font-face {
+            font-family: Molot;
+            src: url("@Url.Content("~/Content/Template/src/fonts/Molot.otf")") format("opentype");
+        }
+        @@font-face {
+            font-family: BeerMoney;
+            src: url("@Url.Content("~/Content/Template/src/fonts/beer money.ttf")");
+        }
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+        @@font-face {
+            font-family: Andika;
+            src: url("@Url.Content("~/Content/Template/src/fonts/Andika-R.ttf")");
+        }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="~/Content/Template/src/css/index.css">
+
+
+    </head>
+    <body>
+
+        <div class="logobox">
+            <a class="logo">PHSE'19</a>
+        </div>
+
+        <nav class="searchbar">
+            <input class="searchline" type="search" placeholder="Введите id..." aria-label="Search">
+
+            <button class="searchbutton" type="submit">
+                <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
+            </button>
+        </nav>
+
+        <div class="data">
+            <div class="contblock" id="Latency">
+                <div class="contdescr">
+                    <img src="~/Content/Template/src/img/graph.png" style="position: absolute; margin-left: 15px;" />
+                    <div>
+                        <h3>Частота появления слов</h3>
+                    </div>
+                    <button class="hidebutton" type="submit">
+                        <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
+                    </button>
+                </div>
+                <div class="contdata"></div>
+            </div>
+
+            <div class="contblock" id="Test">
+                <div class="contdescr">
+                    <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
+                    <div>
+                        <h3>Типология Майерс-Бриггс</h3>
+                    </div>
+                    <button class="hidebutton" type="submit">
+                        <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
+                    </button>
+                </div>
+                <div class="contdata"></div>
+            </div>
+
+            <div class="contblock" id="Rare">
+                <div class="contdescr">
+                    <img src="~/Content/Template/src/img/latency.png" style="position: absolute; margin-left: 15px;" />
+                    <div>
+                        <h3>Самые популярные слова</h3>
+                    </div>
+                    <button class="hidebutton" type="submit">
+                        <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
+                    </button>
+                </div>
+                <div class="contdata"></div>
+            </div>
+
+            <div class="contblock" id="Type">
+                <div class="contdescr">
+                    <img src="~/Content/Template/src/img/robo-logo-black.png" style="
+                            position: absolute;
+        margin-left: 11px;
+        height: 55px;
+        width: 55px;
+        margin-top: -2px;    margin-bottom: 150px;" />
+                    <div>
+                        <h3>Оценка типа аккаунта</h3>
+                    </div>
+                    <button class="hidebutton" type="submit">
+                        <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
+                    </button>
+                </div>
+                <div class="contdata"></div>
+            </div>
+
+        </div>
+        <div class="info">
+            <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
+        </div>
+
+
+        <div class="nav">
+            <div class="navbuttons">
+                <div class="buttongroup">
+                    <button class="navbutton" onclick=" window.location.href='#Latency'">
+                        <img src="~/Content/Template/src/img/graph.png" />
+                        <h3>Частоты слов</h3>
+                    </button>
+
+                    <button class="navbutton" onclick=" window.location.href='#Test'">
+                        <img src="~/Content/Template/src/img/test_partial_passed1600.png">
+                        <h3>Типология</h3>
+                    </button>
+                    <button class="navbutton" onclick=" window.location.href='#Rare'">
+                        <img src="~/Content/Template/src/img/latency.png" />
+                        <h3>Популярные</h3>
+                    </button>
+                    <button class="navbutton" onclick=" window.location.href='#Type'">
+                        <img src="~/Content/Template/src/img/robo-logo-black.png" style="
+                            height: 55px;
+                            width: 55px;" />
+                        <h3 style="margin-left: 20px; margin-top: 9px;">Тип</h3>
+                    </button>
+                    <button class="navbutton" onclick="document.getElementsByClassName('searchline')[0].focus()">
+                        <img src="~/Content/Template/src/img/palm-scan.png" />
+                        <h3>Поиск</h3>
+                    </button>
+                </div>
+                <div class="image">
+
+                </div>
+            </div>
+        </div>
+
+
+    </body>
+
+    <script src="~/Content/Template/src/js/script.js"></script>
+</html>
