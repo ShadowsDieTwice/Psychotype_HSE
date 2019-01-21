@@ -18,7 +18,7 @@ namespace Psychotype_HSE_Tests.Models
             //var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue);
             //Assert.AreEqual(mostPopularWords[0], "тест");
             Dictionary<string, int> popularWords = new Dictionary<string, int>();
-            string str = "вышка вышку вышке вышки тест тесты тестов тесту";
+            string str = "вышка вышку вышке вышки тест тесты тесту";
             string[] words = str.Split(' ');
             foreach (string word in words)
             {
@@ -30,7 +30,7 @@ namespace Psychotype_HSE_Tests.Models
             }
             Assert.AreEqual(2, popularWords.Count);
             Assert.AreEqual(4, popularWords["вышк"]);
-            Assert.AreEqual(4, popularWords["тест"]);
+            Assert.AreEqual(3, popularWords["тест"]);
         }
 
 	    [TestMethod()]
