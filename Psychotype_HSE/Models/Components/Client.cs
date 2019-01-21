@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using VkNet.Model;
 using VkNet.Enums.Filters;
+using System.Text.RegularExpressions;
+using Psychotype_HSE.Models.Components;
 
 namespace Psychotype.Models.Components
 {
@@ -39,13 +41,53 @@ namespace Psychotype.Models.Components
         /// This methods gets all posts from clients wall
         /// </summary>
         /// <returns> WallObject instance </returns>
-        public abstract WallGetObject GetAllPosts();
+        public virtual List<Post> GetAllPosts(DateTime timeFrom, DateTime timeTo)
+        {
+            List<Post> curPosts = new List<Post>();
+            WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+            {
+                OwnerId = VkId
+            });
+
+            foreach (Post post in wall.WallPosts)
+            {
+                if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                    curPosts.Add(post);
+            }
+
+            return curPosts;
+        }
 
         /// <summary>
-        /// This method gets all most popular words on wall
+        /// This method gets all most popular words (in groups) on wall
+        /// Each group is like (cat, cats, catty)
         /// Except words in DataBase (like "по", "с" and etc)
+        /// Works only with Russian words
         /// </summary>
         /// <returns> List of words </returns>
-        public abstract List<string> GetMostPopularWordsOnWall();
+        public virtual List<List<string>> GetMostPopularWordsOnWall(DateTime timeFrom, DateTime timeTo, int numberOfWords = 10)
+        {
+            List<Post> posts = GetAllPosts(timeFrom, timeTo);
+            Dictionary<string, List<string>> popularWords = new Dictionary<string, List<string>>();
+            char[] separators = { ' ', '\n', '\t', ',', '.', '!', '?' };
+            foreach (Post post in posts)
+            {
+                string[] words = post.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string word in words)
+                {
+                    if (word.Length > 2) //чтобы убрать всякие предлоги и тд
+                    {
+                        string key = RussianStemmer.GetTheBase(word);
+	                    if (!popularWords.ContainsKey(key))
+							popularWords.Add(key, new List<string>());
+
+	                    popularWords[key].Add(word);
+					}
+                }
+            }
+
+            var popularKeys = popularWords.OrderByDescending(pair => pair.Value.Count).Select(pair => pair.Value);
+            return popularKeys.Take(numberOfWords).ToList();
+        }
     }
 }

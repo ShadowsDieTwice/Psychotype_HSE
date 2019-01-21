@@ -12,18 +12,6 @@ namespace Psychotype.Models.Components
             VkId = GetIdFromLink();
         }
 
-        public override WallGetObject GetAllPosts()
-        {
-            // TODO: Implement method
-
-            // Дело сделано со смыслом 
-            throw new NotImplementedException();
-        }
-
-        public override List<string> GetMostPopularWordsOnWall()
-        {
-            // TODO: Implement method
-            throw new NotImplementedException();
-        }
+        
     }
 }

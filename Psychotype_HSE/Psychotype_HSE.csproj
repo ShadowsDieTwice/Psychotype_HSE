@@ -183,6 +183,7 @@
     <Compile Include="Models\AppSettings.cs" />
     <Compile Include="Models\Components\Client.cs" />
     <Compile Include="Models\Components\Community.cs" />
+    <Compile Include="Models\Components\RussianStemmer.cs" />
     <Compile Include="Models\Components\User.cs" />
     <Compile Include="Models\Api.cs" />
     <Compile Include="Models\PsychotypeContext.cs" />

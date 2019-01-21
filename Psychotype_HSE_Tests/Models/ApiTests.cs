@@ -15,13 +15,9 @@ namespace Psychotype.Models.Tests
         public void GetTest()
         {
             var api = Api.Get();
-            var get = api.Wall.Get(new WallGetParams
-            {
-
-            });
+            var get = api.Wall.Get(new WallGetParams { });
 
             Assert.IsTrue(true);
-           //ssert.Fail();
         }
     }
 }
