@@ -39,7 +39,7 @@ img
 .logobox
 {
 	grid-row-start: 1;
-  	grid-column-start: 2;
+  	grid-column-start: 1;
   	grid-column-end: 3;
 }
 
@@ -71,13 +71,14 @@ img
 
 .searchline
 {
+    padding: 0px;
 	width: 805px;
     height: 45px;
 }
 
 button
 {
-	border: 1 white; 
+	border: 1px white; 
 	background-color: #2e3441;
 	margin: 0px;
 	vertical-align: center;
@@ -234,7 +235,7 @@ h1,h2,h3,h4
 	padding: 0px;
 
 	position: relative;
-  	left: : 0px;
+  	left: 0px;
 }
 .navbutton:active
 {

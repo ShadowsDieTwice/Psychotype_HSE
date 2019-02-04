@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Psychotype.Models
+namespace Psychotype_HSE.Models
 {
     /// <summary>
     /// All app settings which is required 
@@ -20,7 +20,7 @@ namespace Psychotype.Models
         static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "INSERT_YOUR_TOKEN_HERE";
+            AccessToken = "INPUT_YOUR_TOKEN";
         }
     }
 }

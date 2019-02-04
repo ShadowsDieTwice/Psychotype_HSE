@@ -186,6 +186,7 @@
     <Compile Include="Models\Components\RussianStemmer.cs" />
     <Compile Include="Models\Components\User.cs" />
     <Compile Include="Models\Api.cs" />
+    <Compile Include="Models\PageDataModel.cs" />
     <Compile Include="Models\PsychotypeContext.cs" />
     <Compile Include="Models\PsyhotypeDbInitializer.cs" />
     <Compile Include="Models\RedundantWord.cs" />
