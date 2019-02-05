@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using VkNet.Model;
 
-namespace Psychotype.Models.Components
+namespace Psychotype_HSE.Models.Components
 {
     public class Community : Client
     {
@@ -11,7 +11,5 @@ namespace Psychotype.Models.Components
             Link = link;
             VkId = GetIdFromLink();
         }
-
-        
     }
 }

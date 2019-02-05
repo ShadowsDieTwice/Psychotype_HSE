@@ -5,8 +5,9 @@ using VkNet.Model;
 using VkNet.Enums.Filters;
 using System.Text.RegularExpressions;
 using Psychotype_HSE.Models.Components;
+using System.Diagnostics;
 
-namespace Psychotype.Models.Components
+namespace Psychotype_HSE.Models.Components
 {
     /// <summary>
     /// Class of abstract client of vk
@@ -31,10 +32,17 @@ namespace Psychotype.Models.Components
         {
             var api = Api.Get();
             //Возвращает по короткому имени объект(может быть пользователь, группа или приложение)
-            var obj = api.Utils.ResolveScreenName(Link);
-            if (obj == null)
-                throw new NullReferenceException("There is no page with link: " + Link);
-            return (long)obj.Id;
+            try
+            {
+                var obj = api.Utils.ResolveScreenName(Link);
+                if (obj == null)
+                    throw new NullReferenceException("There is no page with link: " + Link);
+                return (long)obj.Id;
+            }
+            catch (ArgumentNullException)
+            {
+                return 0;
+            }
         }
 
         /// <summary>
