@@ -15,12 +15,22 @@ namespace Psychotype_HSE.Models
         /// Access token for VK API
         /// </summary>
         public static string AccessToken { get; set; }
+        /// <summary>
+        /// Path to python model script 
+        /// </summary>
+        public static string PythonScriptPath { get; set; }
+        /// <summary>
+        /// Path to python interpreter (in a way...)
+        /// </summary>
+        public static string PythonPath { get; set; }
 
 
         static AppSettings()
         { 
             ApplicationId = 6752080;
             AccessToken = "INPUT_YOUR_TOKEN";
+            PythonPath = "INPUT_YOUR_PATH";
+            PythonScriptPath = "INPUT_YOUR_PATH";
         }
     }
 }
