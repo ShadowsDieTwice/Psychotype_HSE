@@ -192,6 +192,7 @@
     <Compile Include="Models\RedundantWord.cs" />
     <Compile Include="Models\SuicideWord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\PythonRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
