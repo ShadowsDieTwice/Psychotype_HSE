@@ -23,14 +23,18 @@ namespace Psychotype_HSE.Models
         /// Path to python interpreter (in a way...)
         /// </summary>
         public static string PythonPath { get; set; }
+        /// <summary>
+        /// Path to suicide_predict.csv (data for suicide_predict.py)
+        /// </summary>
+        public static string SuicidePredictCSV { get; set; }
 
-
-        static AppSettings()
+    static AppSettings()
         { 
             ApplicationId = 6752080;
             AccessToken = "INPUT_YOUR_TOKEN";
             PythonPath = "INPUT_YOUR_PATH";
             PythonScriptPath = "INPUT_YOUR_PATH";
+            SuicidePredictCSV = @"../../Files/suicide_predict.csv";
         }
     }
 }
