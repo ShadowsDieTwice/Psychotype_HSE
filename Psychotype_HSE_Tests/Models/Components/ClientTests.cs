@@ -3,6 +3,7 @@ using Psychotype.Models.Components;
 using Psychotype_HSE.Models.Components;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,19 @@ namespace Psychotype.Models.Components.Tests
         {
             //Throws NullReferenceException
             Client cl = new Community("net_takogo_pablica_i_ya_nadeyus_ne_budet_123");
+        }
+
+        [TestMethod()]
+        public void SaveTextsToCSV()
+        {
+            Client cl = new User("n0ize34");
+            string filePath = @"../../TestFiles/suicide_predict.csv";
+            cl.SaveTextsToCSV(DateTime.MinValue, DateTime.MaxValue, filePath);
+            //+ Check correctness with your eyes
+            string[] lines = File.ReadAllLines(filePath);
+            Assert.IsTrue(lines.Contains("text"));
+            //If that post still exists
+            Assert.IsTrue(lines.Contains("тест тест тест тест тест тест вышка вышка вышка вышка привет пока это для проекта групповая динамика зачем это"));
         }
 
         [TestMethod()]

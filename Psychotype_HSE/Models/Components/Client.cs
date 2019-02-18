@@ -6,6 +6,7 @@ using VkNet.Enums.Filters;
 using System.Text.RegularExpressions;
 using Psychotype_HSE.Models.Components;
 using System.Diagnostics;
+using System.IO;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -42,6 +43,41 @@ namespace Psychotype_HSE.Models.Components
             catch (ArgumentNullException)
             {
                 return 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets all texts from client's posts
+        /// </summary>
+        /// <returns> List of texts </returns>
+        public virtual List<string> GetTexts(DateTime timeFrom, DateTime timeTo)
+        {
+            List<Post> posts = GetAllPosts(timeFrom, timeTo);
+            List<string> texts = new List<string>();    
+            foreach (Post post in posts)
+            {
+                texts.Add(post.Text);
+            }
+            return texts;
+        }
+
+        /// <summary>
+        /// Writes all texts to csv file with header "text"
+        /// </summary>     
+        public virtual void SaveTextsToCSV(DateTime timeFrom, DateTime timeTo, string filePath = null) //AppSettings.SuicidePredictCSV)
+        {
+            //TODO: add filePath default value to AppSetting properly?
+            if (filePath == null)
+                filePath = AppSettings.SuicidePredictCSV;
+
+            List<string> texts = GetTexts(timeFrom, timeTo);
+            string firstLine = "text";
+            //Fully overwrites file 
+            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+            {
+                sw.WriteLine(firstLine);
+                foreach (var text in texts)
+                    sw.WriteLine(text.Replace("\n"," "));
             }
         }
 
