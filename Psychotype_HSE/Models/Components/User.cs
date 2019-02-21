@@ -61,7 +61,8 @@ namespace Psychotype_HSE.Models.Components
             if (api.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams() { UserId = VkId }, false).Count < 15)
                 counter += 50;
 
-            return Math.Min(1, counter / (0.6 * 110));
+            double val = Math.Max(counter / (0.6 * 110), 0);
+            return Math.Min(1, val);
         }
 
     }

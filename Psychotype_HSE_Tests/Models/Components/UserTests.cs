@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Psychotype.Models.Components;
 using System.Threading.Tasks;
+using Psychotype_HSE.Models.Components;
 
 namespace Psychotype_HSE_Tests.Models.Components
 {
