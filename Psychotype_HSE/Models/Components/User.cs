@@ -29,6 +29,7 @@ namespace Psychotype.Models.Components
             else
                 counter -= 15;
 
+
             //check how many group are followed by the user
             if (api.Groups.Get(new VkNet.Model.RequestParams.GroupsGetParams() { UserId = VkId }, false).Count > 250)
                 counter += 5;
@@ -58,7 +59,7 @@ namespace Psychotype.Models.Components
 
 
             //check if the user has a few friends (fake page or bot)
-            if (api.Friends.GetLists().Count < 15)
+            if (api.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams() { UserId = VkId }, false).Count < 15)
                 counter += 50;
 
             return Math.Min(1, counter / (0.6 * 110));
