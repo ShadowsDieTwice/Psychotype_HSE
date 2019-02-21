@@ -21,6 +21,7 @@ namespace Psychotype_HSE_Tests.Models
             Dictionary<string, int> popularWords = new Dictionary<string, int>();
             string str = "вышка вышку вышке вышки тест тесты тесту test";
             string[] words = str.Split(' ');
+            Console.WriteLine(str);
             foreach (string word in words)
             {
                 string key = RussianStemmer.GetTheBase(word);

@@ -20,7 +20,7 @@ namespace Psychotype.Models
         static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "INSERT_YOUR_TOKEN_HERE";
+            AccessToken = "468b8f1f3717146699c57a42f29f766223d3a7b7d96911aefc07c2ffab480cbb20992aff8e4537dce5429";
         }
     }
 }
