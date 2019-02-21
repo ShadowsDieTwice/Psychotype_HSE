@@ -3,7 +3,7 @@ using VkNet;
 using VkNet.Enums.Filters;
 using VkNet.Model;
 
-namespace Psychotype.Models
+namespace Psychotype_HSE.Models
 {
     /// <summary>
     /// Wrapper class for VkNet.VkApi class for single ton pattern

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Psychotype.Models
+namespace Psychotype_HSE.Models
 {
     /// <summary>
     /// All app settings which is required 
@@ -15,12 +15,26 @@ namespace Psychotype.Models
         /// Access token for VK API
         /// </summary>
         public static string AccessToken { get; set; }
+        /// <summary>
+        /// Path to python model script 
+        /// </summary>
+        public static string PythonScriptPath { get; set; }
+        /// <summary>
+        /// Path to python interpreter (in a way...)
+        /// </summary>
+        public static string PythonPath { get; set; }
+        /// <summary>
+        /// Path to suicide_predict.csv (data for suicide_predict.py)
+        /// </summary>
+        public static string SuicidePredictCSV { get; set; }
 
-
-        static AppSettings()
+    static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "468b8f1f3717146699c57a42f29f766223d3a7b7d96911aefc07c2ffab480cbb20992aff8e4537dce5429";
+            AccessToken = "INPUT_YOUR_TOKEN";
+            PythonPath = "INPUT_YOUR_PATH";
+            PythonScriptPath = "INPUT_YOUR_PATH";
+            SuicidePredictCSV = @"../../Files/suicide_predict.csv";
         }
     }
 }

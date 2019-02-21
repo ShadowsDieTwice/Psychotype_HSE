@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Psychotype.Models;
+using Psychotype_HSE.Models;
 using System;
 using VkNet;
 using VkNet.Enums.Filters;

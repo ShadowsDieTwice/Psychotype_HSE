@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using VkNet.Model;
 using System.Text.RegularExpressions;
 
-namespace Psychotype.Models.Components
+namespace Psychotype_HSE.Models.Components
 {
     public class User : Client
     {
-
-
         public User(string link)
         {
             Link = link;
