@@ -102,7 +102,14 @@ namespace Psychotype_HSE.Models.Components
             return curPosts;
         }
 
-       
+        /// <summary>
+        /// Сalculates resulting suicide probability 
+        /// </summary>
+        /// <param name="timeFrom"></param>
+        /// <param name="timeTo"></param>
+        /// <param name="writeFile">path to SuicidePredictCSV</param>
+        /// <param name="readFile">path to SuicideResult</param>
+        /// <returns></returns>
         public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string writeFile, string readFile)
         {
             //if (readFile == null)
