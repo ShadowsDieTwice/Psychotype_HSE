@@ -49,6 +49,19 @@ namespace Psychotype.Models.Components.Tests
             Assert.IsTrue(lines.Contains("тест тест тест тест тест тест вышка вышка вышка вышка привет пока это для проекта групповая динамика зачем это"));
         }
 
+
+        [TestMethod()]
+        public void SuisideProbability()
+        {
+            //this test is correct with default suicide_result if he still has only 2 posts
+            Client cl = new User("n0ize34");
+            string filePath1 = @"../../TestFiles/suicide_predict.csv";
+            string filePath2 = @"../../TestFiles/suicide_result.txt";
+            double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, filePath1, filePath2);
+            //+ Check correctness with your eyes
+            Assert.IsTrue(res < 0.999 && res > 0.12);            
+        }
+
         [TestMethod()]
         public void GetAllPostsTest()
         {

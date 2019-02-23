@@ -5,6 +5,7 @@ using VkNet.Model;
 using VkNet.Enums.Filters;
 using System.Text.RegularExpressions;
 using Psychotype_HSE.Models.Components;
+using Psychotype_HSE.Util;
 using System.Diagnostics;
 using System.IO;
 
@@ -66,7 +67,6 @@ namespace Psychotype_HSE.Models.Components
         /// </summary>     
         public virtual void SaveTextsToCSV(DateTime timeFrom, DateTime timeTo, string filePath = null) //AppSettings.SuicidePredictCSV)
         {
-            //TODO: add filePath default value to AppSetting properly?
             if (filePath == null)
                 filePath = AppSettings.SuicidePredictCSV;
 
@@ -100,6 +100,70 @@ namespace Psychotype_HSE.Models.Components
             }
 
             return curPosts;
+        }
+
+        /// <summary>
+        /// Сalculates resulting suicide probability 
+        /// </summary>
+        /// <param name="timeFrom"></param>
+        /// <param name="timeTo"></param>
+        /// <param name="writeFile"> Path to SuicidePredictCSV </param>
+        /// <param name="readFile"> Path to SuicideResult </param>
+        /// <returns></returns>
+        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string writeFile, string readFile)
+        {
+            //if (readFile == null)
+            //    readFile = AppSettings.SuicideResult;
+            //if (writeFile == null)
+            //    writeFile = AppSettings.SuicidePredictCSV;
+        
+            List<Post> posts = GetAllPosts(timeFrom, timeTo);
+            SaveTextsToCSV(timeFrom, timeTo, writeFile);
+            PythonRunner.RunScript(writeFile, AppSettings.PythonScriptPath);
+            //TODO Wait till file is ready?
+            List<double> probs = new List<double>();          
+            using (StreamReader sr = new StreamReader(readFile, System.Text.Encoding.UTF8))
+            {
+                string str;
+                while ((str = sr.ReadLine()) != null)
+                {                   
+                    try
+                    {
+                        probs.Add(double.Parse(str));
+                    } catch (FormatException)
+                    {
+                        //Because of commas in russian doubles
+                        str = str.Replace(".", ",");
+                        probs.Add(double.Parse(str));
+                    }
+                    
+                }               
+            }
+            if (probs.Count != posts.Count)
+                throw new FormatException("Posts count isn't equal to probabilities count");
+
+            //Finding weighted arithmetic mean
+            double result = 0,  
+                normalizer = 0, //Sum of weights
+                w;
+            for(int i = 0; i < probs.Count; i++)
+            {
+                w = PostWeight(posts[i]);
+                result += probs[i] * w;
+                normalizer += w;
+            }
+
+            return result / normalizer;
+        }
+
+        /// <summary>
+        /// Weight of the post that depends on its date
+        /// </summary>
+        public virtual double PostWeight(Post post)
+        {
+            //difference in days
+            TimeSpan span = DateTime.Now - post.Date.Value;
+            return 1 / Math.Log(span.TotalDays);
         }
 
         /// <summary>
