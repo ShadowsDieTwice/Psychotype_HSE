@@ -107,8 +107,8 @@ namespace Psychotype_HSE.Models.Components
         /// </summary>
         /// <param name="timeFrom"></param>
         /// <param name="timeTo"></param>
-        /// <param name="writeFile">path to SuicidePredictCSV</param>
-        /// <param name="readFile">path to SuicideResult</param>
+        /// <param name="writeFile"> Path to SuicidePredictCSV </param>
+        /// <param name="readFile"> Path to SuicideResult </param>
         /// <returns></returns>
         public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string writeFile, string readFile)
         {
