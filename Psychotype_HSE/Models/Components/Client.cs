@@ -17,14 +17,30 @@ namespace Psychotype_HSE.Models.Components
     /// </summary>
     public abstract class Client
     {
+        private string link;
         /// <summary>
         /// Link to the client's wall. Format: id123456, public123456, short_name etc.
         /// </summary>
-        public string Link { get; set; }
+        public string Link
+        {
+            get { return link; }
+            set { link = LinkToShortName(value); }
+        }
+
         /// <summary>
         /// Id of client in Vk base
         /// </summary>
         public long VkId { get; set; }
+
+        /// <summary>
+        /// Takes the last part of URL i.e short name of the page
+        /// </summary>
+        /// <param name="link"> URL of the page </param>
+        /// <returns> Client's short name </returns>
+        public static string LinkToShortName(string link)
+        {           
+            return new Regex(@"[^/]+(?=/$|$)").Match(link).Value;
+        }
 
         /// <summary>
         /// This method gets VkId from Link to client

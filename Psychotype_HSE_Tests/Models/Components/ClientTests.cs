@@ -37,6 +37,18 @@ namespace Psychotype.Models.Components.Tests
         }
 
         [TestMethod()]
+        public void GetIdFromURLTest()
+        {
+            Client cl = new User("vk.com/id1/");
+            Assert.AreEqual(cl.VkId, 1);
+            cl = new User("https://vk.com/maxim_rachinskiy");
+            Assert.AreEqual(cl.VkId, 52372015);
+            
+            cl = new Community("https://vk.com/team");
+            Assert.AreEqual(cl.VkId, 22822305);
+        }
+
+        [TestMethod()]
         public void SaveTextsToCSV()
         {
             Client cl = new User("n0ize34");
