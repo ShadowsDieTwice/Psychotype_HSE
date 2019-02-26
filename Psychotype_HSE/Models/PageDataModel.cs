@@ -14,9 +14,9 @@ namespace Psychotype_HSE.Models
             // список пар <корень, формы>
             public List<Tuple<string, List<String>>> response = new List<Tuple<string, List<string>>>();
 
-            public PopularWordsAtributes() {}
+            public PopularWordsAtributes() { }
 
-            public PopularWordsAtributes(Components.User user, 
+            public PopularWordsAtributes(Components.User user,
                 DateTime timeFrom, DateTime timeTo, int numberOfWords)
             {
                 List<List<String>> popularWords = user.GetMostPopularWordsOnWall(
@@ -32,6 +32,13 @@ namespace Psychotype_HSE.Models
             }
         }
 
+        public double BotProbability
+        {
+            get
+            {
+                return this.User.IsBot();
+            }
+        }
         DateTime timeFrom = new DateTime(2006, 1, 1);
         DateTime timeTo = DateTime.Now;
         int numberOfWord = 10;
@@ -56,7 +63,9 @@ namespace Psychotype_HSE.Models
         public PageDataModel() : this("") {}
 
         public PageDataModel(String id) //: this(new Components.User(id))
-        { Id = id; }
+        {
+            Id = id;
+        }
 
         public PageDataModel(Components.User user)
         {

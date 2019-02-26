@@ -35,7 +35,7 @@ namespace Psychotype_HSE.Models
         static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "INPUT_YOUR_TOKEN";          
+            AccessToken = "41c71ee7d1f9179682f3a47288a4f0e17ab2ad2b46cd7c05afb1574445929412e12529e3b06f3b432c5ad";          
             PythonPath = "INPUT_YOUR_PATH";
             PythonScriptPath = "INPUT_YOUR_PATH";
             SuicidePredictCSV = @"../../Files/suicide_predict.csv";

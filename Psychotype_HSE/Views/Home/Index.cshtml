@@ -62,7 +62,7 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
+            <div class="contdata" style="display: block;"></div>
         </div>
 
         <div class="contblock" id="Test">
@@ -75,7 +75,7 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
+            <div class="contdata" style="display: block;"></div>
         </div>
 
         <div class="contblock" id="Rare">
@@ -88,7 +88,7 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata">
+            <div class="contdata" style="display: block;">
                 @if (Model != null)
                 {
                 <ol>
@@ -131,7 +131,25 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
+            <div class="contdata" style="display: block;">
+                @if (Model != null)
+                {
+                    double prob = Model.BotProbability;
+                <h4>
+                    @if (prob > 0.5)
+                    {
+                        @:Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.\n
+                    }
+                    else
+                    {
+                        @:Скорее всего аккаунт является персональной страницей настоящего человека.
+                    }
+                </h4>
+                <p>
+                    Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
+                </p>
+                }
+            </div>
         </div>
 
     </div>
