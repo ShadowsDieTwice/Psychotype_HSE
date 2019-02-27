@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Psychotype_HSE.Util;
+using Psychotype_HSE.Models;
 
 namespace Psychotype.Models.Components.Tests
 {
@@ -44,7 +46,6 @@ namespace Psychotype.Models.Components.Tests
             cl.SaveTextsToCSV(DateTime.MinValue, DateTime.MaxValue, filePath);
             //+ Check correctness with your eyes
             string[] lines = File.ReadAllLines(filePath);
-            Assert.IsTrue(lines.Contains("text"));
             //If that post still exists
             Assert.IsTrue(lines.Contains("тест тест тест тест тест тест вышка вышка вышка вышка привет пока это для проекта групповая динамика зачем это"));
         }
@@ -54,12 +55,18 @@ namespace Psychotype.Models.Components.Tests
         public void SuisideProbability()
         {
             //this test is correct with default suicide_result if he still has only 2 posts
-            Client cl = new User("n0ize34");
-            string filePath1 = @"../../TestFiles/suicide_predict.csv";
+            
+            Client cl = new User("durov");
+            string filePath1 = @"../../TestFiles/userPosts.csv";
             string filePath2 = @"../../TestFiles/suicide_result.txt";
+
+            PythonRunner.RunScript(@"../../../Psychotype_HSE/Util/Scripts/suicideScript.py", AppSettings.PythonPath,
+                filePath2, filePath1);
+
             double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, filePath1, filePath2);
             //+ Check correctness with your eyes
-            Assert.IsTrue(res < 0.999 && res > 0.12);            
+            Console.WriteLine(res);
+            Assert.IsTrue(res < 0.999 && res >= 0.00);            
         }
 
         [TestMethod()]
