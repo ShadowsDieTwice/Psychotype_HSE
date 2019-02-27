@@ -85,9 +85,18 @@ namespace Psychotype.Models.Components.Tests
         {
             User user = new User("n0ize34");
 
-            var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue);
+            var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue, 40);
 
             Assert.IsTrue(mostPopularWords[0].Contains("тест"));
+
+            //Check if it removes all except letters
+            bool cont = false;
+            foreach(var list in mostPopularWords)
+            {
+                if (list.Contains("надо"))
+                    cont = true;
+            }
+            Assert.IsTrue(cont);
         }
     }
 }

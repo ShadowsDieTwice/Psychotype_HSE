@@ -199,13 +199,19 @@ namespace Psychotype_HSE.Models.Components
                 string[] words = post.Text.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string word in words)
                 {
-                    if (word.Length > 2) //чтобы убрать всякие предлоги и тд
+                    //New vvariable so we can change (remove all non-latters) it
+                    string tempWord = word; 
+                    char[] arr = tempWord.ToCharArray();                  
+                    //Leaves only letters in the word
+                    tempWord = new string(Array.FindAll<char>(arr, (c => char.IsLetter(c))));                    
+
+                    if (tempWord.Length > 2) //чтобы убрать всякие предлоги и тд
                     {
-                        string key = RussianStemmer.GetTheBase(word);
+                        string key = RussianStemmer.GetTheBase(tempWord);
 	                    if (!popularWords.ContainsKey(key))
 							popularWords.Add(key, new List<string>());
 
-	                    popularWords[key].Add(word);
+	                    popularWords[key].Add(tempWord);
 					}
                 }
             }
