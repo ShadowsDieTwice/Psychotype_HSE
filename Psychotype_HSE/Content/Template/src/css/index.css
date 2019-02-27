@@ -10,7 +10,7 @@
 }
 
 h4, p {
-    font-family: Andika, Tahoma;
+    font-family: Andika, Arial, Tahoma;
     font-color: black;
     margin-right: 30px;
     margin-left: 30px;
@@ -31,12 +31,11 @@ div{
     padding: 0;
  }
 
- html, body
-{
+html, body {
     height: 98%;
     margin: 0;
     padding: 0;
-    font-family: Andika;
+    font-family: Andika, Arial, Tahoma;
 }
 
 body
@@ -102,14 +101,12 @@ button
 }
 
 input {
-  width: 100%;
-  margin: 0;
-  padding: 12px 20px;
-
-  font: 18px Andika,arial,sans-serif;
-  line-height: 26px;
-
-  outline: none;
+    width: 100%;
+    margin: 0;
+    padding: 12px 20px;
+    font: 18px Andika, Arial, Tahoma;
+    line-height: 26px;
+    outline: none;
 }
 
 input:focus{
@@ -347,4 +344,11 @@ h1,h2,h3
     overflow: hidden;
     background-color: #f1f1f1;
     transition: max-height 0.2s ease-out;
+    padding-bottom: 30px;
+}
+
+ol {
+    margin: 10px;
+    font-family: Andika, Arial, Tahoma;
+    font-size: 18px;
 }

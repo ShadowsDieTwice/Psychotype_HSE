@@ -34,14 +34,14 @@
 <body>
 
     <div class="logobox">
-        <a class="logo">PHSE'19 @{if (Model != null) {@Model.Id }} </a>
+        <a class="logo">PHSE'19 @{if (Model != null && Model.isLinkValid) {@Model.Id }} </a>
     </div>
     @using (Html.BeginForm("MostPopularWords", "Home", FormMethod.Post))
     {
 
     <nav class="searchbar">
 
-        @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id...", @class = "searchline" })
+        @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id существующего открытого профиля vk.com", @class = "searchline" })
         @Html.ValidationMessageFor(m => m.Id)
         <!--input class="searchline" name="id" type="search" placeholder="Введите id..." aria-label="Search"-->
 
@@ -89,29 +89,39 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null)
+                @if (Model != null && Model.isLinkValid)
                 {
+                    List<Tuple<String,List<String>>> popularWords = Model.PopularWords.response;
+                    if (Model.hasWords)
+                    {
                 <ol>
                     @foreach (Tuple<String, List<String>> item in Model.PopularWords.response)
                     {
+                        String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                     <li>
-                        <p>@item.Item1</p>
+                        
+                        <a href="@link">@item.Item1</a>
                         <div>
                             <ul>
                                 @foreach (String word in item.Item2)
                                 {
-                                String link = PageDataModel.PopularWordsAtributes.dictLink + word;
-                                <li>
-                                    <a href="@link">
-                                        @word
-                                    </a>
-                                </li>
-                                }
-                            </ul>
-                        </div>
+                                link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                                    <li>
+                                        <a href="@link">
+                                            @word
+                                        </a>
+                                    </li>
+}
+                             </ul>
+                         </div>
                     </li>
                     }
                 </ol>
+                    }
+                    else
+                    {
+                        <h4> На странице нет постов за последний месяц, видимых всем пользователями, содержащих слова. </h4>
+                    }
                 }
             </div>
         </div>
@@ -132,7 +142,7 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null)
+                @if (Model != null && Model.isLinkValid)
                 {
                     double prob = Model.BotProbability;
                 <h4>
