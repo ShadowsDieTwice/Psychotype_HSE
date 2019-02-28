@@ -21,9 +21,9 @@ namespace Psychotype_HSE.Util
             start.RedirectStandardOutput = true;
             start.RedirectStandardError = true;
 
-            //using (Process process = Process.Start(start))
+            using (Process process = Process.Start(start))
             {
-                //using (StreamReader reader = process.StandardOutput)
+                using (StreamReader reader = process.StandardOutput)
                 {
                     //err = process.StandardError.ReadToEnd();
                     //res = reader.ReadToEnd();
