@@ -23,21 +23,14 @@ namespace Psychotype_HSE.Models
                        timeFrom, timeTo, numberOfWords
                     );
 
-                // для всех слов создаем пары <корень, формы>
-                /*
-                for (int i = 0; i < numberOfWords; i++)
-                    if (i + 1 <= popularWords.Count)
-                        response.Add(new Tuple<string, List<string>>(
-                            Components.RussianStemmer.GetTheBase(popularWords[i][0]),
-                            popularWords[i]));
-                */
+                // для всех слов создаем пары <слово, формы>
                 for (int i = 0; i < numberOfWords; i++)
                     if (i + 1 <= popularWords.Count)
                     {
                         HashSet<string> set = new HashSet<string>();
                         foreach (string s in popularWords[i])
                         {
-                            set.Add(s);
+                            set.Add(s.ToLower());
                         }
                         List<String> list = set.ToList();
                         String leading = list[0];
@@ -49,97 +42,112 @@ namespace Psychotype_HSE.Models
             }
         }
 
-        public double BotProbability
+        static DateTime timeFrom = new DateTime(2006, 1, 1);
+        static DateTime timeTo = DateTime.Now;
+        static int numberOfWord = 10;
+
+
+        private static String id = "";
+        private static double botProbability = 0;
+        private static bool hasWords = false;
+        private static PopularWordsAtributes popularWords = new PopularWordsAtributes();
+
+        static public double BotProbability
         {
             get
             {
-                try
-                {
-                    if (isLinkValid)
-                        return this.User.IsBot();
-                }
-                catch (Exception)
-                {
-                    isLinkValid = false;
-                    Id = "";
-                }
-                
-                return 0;
+                return botProbability;
             }
         }
-        DateTime timeFrom = new DateTime(2006, 1, 1);
-        DateTime timeTo = DateTime.Now;
-        int numberOfWord = 10;
 
-        /// <summary>
-        /// Must be calles after PopularWords, or an exception will be thrown! 
-        /// </summary>
-        public bool hasWords { set; get; }
+        static public bool HasWords
+        {
+            get { return hasWords; }
+        }
 
-        public PopularWordsAtributes PopularWords
+        static public PopularWordsAtributes PopularWords
         {
             get
             {
-                PopularWordsAtributes popularWords;
-                if (isLinkValid)
-                    popularWords = new PopularWordsAtributes(User, timeFrom, timeTo, numberOfWord);
-                else
-                    popularWords =  new PopularWordsAtributes();
-                
-                hasWords = !(popularWords.response.Count == 0);
-
                 return popularWords;
             }
         }
 
-        public String Id { get; set; }
-        public Components.User User
+        public String Id
         {
             get
             {
-                return new Components.User(Id);
+                return id;
+            }
+            set
+            {
+                string[] splitedId;
+
+                isLinkValid = false;
+
+                if (value != null)
+                {
+                    splitedId = value.Split('/');
+                    id = splitedId[splitedId.Length - 1];
+                }
+                else id = "";
+
+                try
+                {
+                    if (id == "")
+                        throw new Exception("Void input");
+                    var test = (new Psychotype_HSE.Models.Components.User(id));
+                    isLinkValid = true;
+                }
+                catch (Exception)
+                {
+                    id = "";
+                }
+
+                if (isLinkValid)
+                {
+                    user = new Components.User(Id);
+                }
+
+                if (isLinkValid)
+                {
+                    try
+                    {
+                        if (isLinkValid)
+                            botProbability = User.IsBot();
+                        else botProbability = 0;
+                    }
+                    catch (Exception)
+                    {
+                        isLinkValid = false;
+                        id = "";
+                        botProbability = 0;
+                    }
+                }
+
+                if (isLinkValid)
+                {
+                    if (isLinkValid)
+                        popularWords = new PopularWordsAtributes(User, timeFrom, timeTo, numberOfWord);
+                    else
+                        popularWords = new PopularWordsAtributes();
+
+                    hasWords = !(popularWords.response.Count == 0);
+                }
             }
         }
 
-        public PageDataModel() : this("") { }
+        static Components.User user = new Components.User("");
 
-        public bool isLinkValid { set; get; }
-
-        public PageDataModel(String init_id) //: this(new Components.User(id))
+        static public Components.User User
         {
-            string[] splitedId;
-            string id;
-
-            isLinkValid = false;
-
-            if (init_id != null)
+            get
             {
-                splitedId = init_id.Split('/');
-                id = splitedId[splitedId.Length - 1];
+                return user;
             }
-            else id = "";
-            
-            try
-            {
-                if (id == "")
-                    throw new Exception("Void input");
-                var test = (new Psychotype_HSE.Models.Components.User(id));
-                //model = new PageDataModel(id);
-                Id = id;
-                isLinkValid = true;
-            }
-            catch (Exception)
-            {
-                Id = "";
-            }
-            
         }
 
-        public PageDataModel(Components.User user)
-        {
-            //User = user;
-            //Id = user.VkId.ToString();
-            //PopularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
-        }
+
+        static public bool isLinkValid { set; get; }
     }
 }

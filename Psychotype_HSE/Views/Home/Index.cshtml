@@ -34,22 +34,19 @@
 <body>
 
     <div class="logobox">
-        <a class="logo">PHSE'19 @{if (Model != null && Model.isLinkValid) {@Model.Id }} </a>
+        <a class="logo">
+            PHSE'19
+        </a>
     </div>
     @using (Html.BeginForm("MostPopularWords", "Home", FormMethod.Post))
     {
-
-    <nav class="searchbar">
-
-        @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id существующего открытого профиля vk.com", @class = "searchline" })
-        @Html.ValidationMessageFor(m => m.Id)
-        <!--input class="searchline" name="id" type="search" placeholder="Введите id..." aria-label="Search"-->
-
-        <button class="searchbutton" type="submit">
-            <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
-        </button>
-
-    </nav>
+        <nav class="searchbar">
+            @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id существующего открытого профиля vk.com", @class = "searchline" })
+            @Html.ValidationMessageFor(m => m.Id)
+            <button class="searchbutton" type="submit">
+                <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
+            </button>
+        </nav>
     }
     <div class="data">
         <div class="contblock" id="Latency">
@@ -89,34 +86,34 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null && Model.isLinkValid)
+                @if (Model != null && PageDataModel.isLinkValid)
                 {
-                    List<Tuple<String,List<String>>> popularWords = Model.PopularWords.response;
-                    if (Model.hasWords)
+
+                    if (PageDataModel.HasWords)
                     {
-                <ol>
-                    @foreach (Tuple<String, List<String>> item in Model.PopularWords.response)
-                    {
-                        String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
-                    <li>
-                        
-                        <a href="@link">@item.Item1</a>
-                        <div>
-                            <ul>
-                                @foreach (String word in item.Item2)
-                                {
-                                link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                        List<Tuple<String, List<String>>> popularWords = PageDataModel.PopularWords.response;
+                        <ol>
+                            @foreach (Tuple<String, List<String>> item in popularWords)
+                            {
+                                String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
+                                <li>
+                                        <a href="@link">
+                                            @item.Item1
+                                        </a>
+                                            <ul>
+                                                @foreach (String word in item.Item2)
+            {
+                link = PageDataModel.PopularWordsAtributes.dictLink + word;
                                     <li>
                                         <a href="@link">
                                             @word
                                         </a>
                                     </li>
 }
-                             </ul>
-                         </div>
-                    </li>
-                    }
-                </ol>
+                                            </ul>
+                                </li>
+                            }
+                        </ol>
                     }
                     else
                     {
@@ -125,7 +122,6 @@
                 }
             </div>
         </div>
-
         <div class="contblock" id="Type">
             <div class="contdescr">
                 <img src="~/Content/Template/src/img/robo-logo-black.png" style="
@@ -142,32 +138,29 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null && Model.isLinkValid)
+                @if (Model != null && PageDataModel.isLinkValid)
                 {
-                    double prob = Model.BotProbability;
-                <h4>
-                    @if (prob > 0.5)
-                    {
-                        @:Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.\n
-                    }
-                    else
-                    {
-                        @:Скорее всего аккаунт является персональной страницей настоящего человека.
-                    }
-                </h4>
-                <p>
-                    Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
-                </p>
+                    double prob = PageDataModel.BotProbability;
+                    <h4>
+                        @if (prob > 0.5)
+                        {
+                            @:Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
+                        }
+                        else
+                        {
+                            @:Скорее всего аккаунт является персональной страницей настоящего человека.
+                        }
+                    </h4>
+                    <p>
+                        Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
+                    </p>
                 }
             </div>
         </div>
-
     </div>
     <div class="info">
         <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
     </div>
-
-
     <div class="nav">
         <div class="navbuttons">
             <div class="buttongroup">
@@ -175,7 +168,6 @@
                     <img src="~/Content/Template/src/img/graph.png" />
                     <h3>Частоты слов</h3>
                 </button>
-
                 <button class="navbutton" onclick=" window.location.href='#Test'">
                     <img src="~/Content/Template/src/img/test_partial_passed1600.png">
                     <h3>Типология</h3>
@@ -196,13 +188,9 @@
                 </button>
             </div>
             <div class="image">
-
             </div>
         </div>
     </div>
-
-
 </body>
-
     <script src="~/Content/Template/src/js/script.js"></script>
 </html>
