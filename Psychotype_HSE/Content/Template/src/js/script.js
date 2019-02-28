@@ -23,11 +23,12 @@ for (i = 0; i < coll.length; i++) {
     var img = this.childNodes.item(1);
     var content = this.parentElement.nextElementSibling;
     if (content.style.display === "block") {
-      content.style.display = "none";
-      img.setAttribute('style','transform:rotate(0deg)');
+        content.style.display = "none";
+        img.setAttribute('style', 'transform:rotate(180deg)');
+      
     } else {
-      content.style.display = "block";
-      img.setAttribute('style','transform:rotate(180deg)');
+        content.style.display = "block";
+        img.setAttribute('style', 'transform:rotate(0deg)');
     }
   });
 }

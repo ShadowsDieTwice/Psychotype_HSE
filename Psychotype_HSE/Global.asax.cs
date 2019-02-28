@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Psychotype_HSE.Models;
+using Psychotype_HSE.Util;
 
 namespace Psychotype_HSE
 {
@@ -18,6 +19,8 @@ namespace Psychotype_HSE
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath,
+                AppSettings.SuicideResult, AppSettings.UserPosts);
 	        //Database.SetInitializer(new PsyhotypeDbInitializer());
         }
     }
