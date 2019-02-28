@@ -34,22 +34,19 @@
 <body>
 
     <div class="logobox">
-        <a class="logo">PHSE'19 @{if (Model != null) {@Model.Id }} </a>
+        <a class="logo">
+            PHSE'19
+        </a>
     </div>
     @using (Html.BeginForm("MostPopularWords", "Home", FormMethod.Post))
     {
-
-    <nav class="searchbar">
-
-        @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id...", @class = "searchline" })
-        @Html.ValidationMessageFor(m => m.Id)
-        <!--input class="searchline" name="id" type="search" placeholder="Введите id..." aria-label="Search"-->
-
-        <button class="searchbutton" type="submit">
-            <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
-        </button>
-
-    </nav>
+        <nav class="searchbar">
+            @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id существующего открытого профиля vk.com", @class = "searchline" })
+            @Html.ValidationMessageFor(m => m.Id)
+            <button class="searchbutton" type="submit">
+                <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
+            </button>
+        </nav>
     }
     <div class="data">
         <div class="contblock" id="Latency">
@@ -62,7 +59,7 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
+            <div class="contdata" style="display: block;"></div>
         </div>
 
         <div class="contblock" id="Test">
@@ -75,7 +72,7 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
+            <div class="contdata" style="display: block;"></div>
         </div>
 
         <div class="contblock" id="Rare">
@@ -88,34 +85,43 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata">
-                @if (Model != null)
+            <div class="contdata" style="display: block;">
+                @if (Model != null && PageDataModel.isLinkValid)
                 {
-                <ol>
-                    @foreach (Tuple<String, List<String>> item in Model.PopularWords.response)
+
+                    if (PageDataModel.HasWords)
                     {
-                    <li>
-                        <p>@item.Item1</p>
-                        <div>
-                            <ul>
-                                @foreach (String word in item.Item2)
-                                {
-                                String link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                        List<Tuple<String, List<String>>> popularWords = PageDataModel.PopularWords.response;
+                        <ol>
+                            @foreach (Tuple<String, List<String>> item in popularWords)
+                            {
+                                String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                                 <li>
-                                    <a href="@link">
-                                        @word
-                                    </a>
+                                        <a href="@link">
+                                            @item.Item1
+                                        </a>
+                                            <ul>
+                                                @foreach (String word in item.Item2)
+            {
+                link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                                    <li>
+                                        <a href="@link">
+                                            @word
+                                        </a>
+                                    </li>
+}
+                                            </ul>
                                 </li>
-                                }
-                            </ul>
-                        </div>
-                    </li>
+                            }
+                        </ol>
                     }
-                </ol>
+                    else
+                    {
+                        <h4> На странице нет постов за последний месяц, видимых всем пользователями, содержащих слова. </h4>
+                    }
                 }
             </div>
         </div>
-
         <div class="contblock" id="Type">
             <div class="contdescr">
                 <img src="~/Content/Template/src/img/robo-logo-black.png" style="
@@ -131,15 +137,30 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
+            <div class="contdata" style="display: block;">
+                @if (Model != null && PageDataModel.isLinkValid)
+                {
+                    double prob = PageDataModel.BotProbability;
+                    <h4>
+                        @if (prob > 0.5)
+                        {
+                            @:Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
+                        }
+                        else
+                        {
+                            @:Скорее всего аккаунт является персональной страницей настоящего человека.
+                        }
+                    </h4>
+                    <p>
+                        Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
+                    </p>
+                }
+            </div>
         </div>
-
     </div>
     <div class="info">
         <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
     </div>
-
-
     <div class="nav">
         <div class="navbuttons">
             <div class="buttongroup">
@@ -147,7 +168,6 @@
                     <img src="~/Content/Template/src/img/graph.png" />
                     <h3>Частоты слов</h3>
                 </button>
-
                 <button class="navbutton" onclick=" window.location.href='#Test'">
                     <img src="~/Content/Template/src/img/test_partial_passed1600.png">
                     <h3>Типология</h3>
@@ -168,13 +188,9 @@
                 </button>
             </div>
             <div class="image">
-
             </div>
         </div>
     </div>
-
-
 </body>
-
     <script src="~/Content/Template/src/js/script.js"></script>
 </html>

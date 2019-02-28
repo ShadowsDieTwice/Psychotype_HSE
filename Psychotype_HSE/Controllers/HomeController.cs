@@ -13,23 +13,13 @@ namespace Psychotype.Controllers
     {
         public ActionResult Index(PageDataModel model)
         {
-            if (model != null)
-                Debug.WriteLine("Index: ", model.Id);
-            else
-                Debug.WriteLine("Index: null");
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult MostPopularWords(PageDataModel mod)
+        public ActionResult MostPopularWords(PageDataModel model)
         {
-            PageDataModel model = null;
-            if (mod != null && mod.Id != "")
-            {
-                model = new PageDataModel(mod.Id);
-            }
-            
-            return RedirectToAction("Index", model);
+            return RedirectToAction("Index");
         }
     }
 }
