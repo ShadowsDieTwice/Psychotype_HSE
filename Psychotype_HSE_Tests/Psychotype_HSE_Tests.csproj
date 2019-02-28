@@ -102,6 +102,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Scripts\suicide_model2.h5" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\script.py" />

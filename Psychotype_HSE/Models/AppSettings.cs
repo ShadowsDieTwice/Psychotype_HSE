@@ -24,9 +24,9 @@ namespace Psychotype_HSE.Models
         /// </summary>
         public static string PythonPath { get; set; }
         /// <summary>
-        /// Path to suicide_predict.csv (data for suicide_predict.py)
+        /// Path to suicide_predict.csv (data for suicideScript.py)
         /// </summary>
-        public static string SuicidePredictCSV { get; set; }
+        public static string UserPosts { get; set; }
         /// <summary>
         /// Result of suicide prediction by python script
         /// </summary>
@@ -35,10 +35,10 @@ namespace Psychotype_HSE.Models
         static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "371985be7099a575aac1d6b5ea8618d00fb428f3ed828c65dfb316a595fd70b286569f39e0530a8ed5b31";          
-            PythonPath = "INPUT_YOUR_PATH";
-            PythonScriptPath = "INPUT_YOUR_PATH";
-            SuicidePredictCSV = @"../../Files/suicide_predict.csv";
+            AccessToken = "INPUT YOUR TOKEN";          
+            PythonPath = @"INPUT YOUR PATH";
+            PythonScriptPath = @"../../Util/Scripts/suicideScript.py";
+            UserPosts = @"../../Files/userPosts.csv";
             SuicideResult = @"../../Files/suicide_result.txt";
         }
     }

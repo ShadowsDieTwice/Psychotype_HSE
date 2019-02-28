@@ -68,14 +68,12 @@ namespace Psychotype_HSE.Models.Components
         public virtual void SaveTextsToCSV(DateTime timeFrom, DateTime timeTo, string filePath = null) //AppSettings.SuicidePredictCSV)
         {
             if (filePath == null)
-                filePath = AppSettings.SuicidePredictCSV;
+                filePath = AppSettings.UserPosts;
 
             List<string> texts = GetTexts(timeFrom, timeTo);
-            string firstLine = "text";
             //Fully overwrites file 
             using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
             {
-                sw.WriteLine(firstLine);
                 foreach (var text in texts)
                     sw.WriteLine(text.Replace("\n"," "));
             }
@@ -118,29 +116,35 @@ namespace Psychotype_HSE.Models.Components
             //    writeFile = AppSettings.SuicidePredictCSV;
         
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            SaveTextsToCSV(timeFrom, timeTo, writeFile);
-            PythonRunner.RunScript(writeFile, AppSettings.PythonScriptPath);
-            //TODO Wait till file is ready?
-            List<double> probs = new List<double>();          
+            SaveTextsToCSV(timeFrom, timeTo, writeFile + ".temp");
+            File.Delete(writeFile);
+            File.Move(writeFile + ".temp", writeFile);
+
+            List<double> probs = new List<double>();
+            while (!File.Exists(readFile + ".temp")) {}
+
+            File.Move(readFile + ".temp", readFile);
             using (StreamReader sr = new StreamReader(readFile, System.Text.Encoding.UTF8))
             {
                 string str;
                 while ((str = sr.ReadLine()) != null)
-                {                   
+                {
                     try
                     {
                         probs.Add(double.Parse(str));
-                    } catch (FormatException)
+                    }
+                    catch (FormatException)
                     {
                         //Because of commas in russian doubles
                         str = str.Replace(".", ",");
                         probs.Add(double.Parse(str));
                     }
-                    
-                }               
+
+                }
             }
+            File.Delete(readFile);
             if (probs.Count != posts.Count)
-                throw new FormatException("Posts count isn't equal to probabilities count");
+                throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
 
             //Finding weighted arithmetic mean
             double result = 0,  
