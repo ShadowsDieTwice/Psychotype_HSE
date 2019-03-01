@@ -50,6 +50,24 @@ namespace Psychotype_HSE.Models
         private static double suicideProbability = 0;
         private static bool hasWords = false;
         private static PopularWordsAtributes popularWords = new PopularWordsAtributes();
+        private static string fullName = "Имя Фамилия";
+        private static string photoURL = "https://vk.com/images/camera_200.png?ava=1";
+        private static List<string> description = new List<string>();
+
+        static public string FullName
+        {
+            get { return fullName;  }
+        }
+
+        static public string PhotoURL
+        {
+            get { return photoURL; }
+        }
+
+        static public List<string> Description
+        {
+            get { return description; }
+        }
 
         static public double BotProbability
         {
@@ -125,10 +143,10 @@ namespace Psychotype_HSE.Models
                 // From this poin we can be sure if link is valid.
                 if (isLinkValid)
                 {
-                    string curDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";// Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/Files/"; //.GetCurrentDirectory();
-                    string fileData = curDir + id + ".csv";
-                    string fileRes = curDir + id + ".txt";
-
+                    //string curDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";// Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/Files/"; //.GetCurrentDirectory();
+                    string fileData = AppSettings.WorkingDir + id + ".csv";
+                    string fileRes = AppSettings.WorkingDir + id + ".txt";
+                    
                     //"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Files\"
 
                     // вызывается отдельно
@@ -136,8 +154,92 @@ namespace Psychotype_HSE.Models
                     //    AppSettings.PythonPath, curDir);//, fileData);
 
                     popularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
-                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, curDir, id );
-                    // не забыть удалять файлы с данными
+
+                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, AppSettings.WorkingDir, id );
+
+                    VkNet.Model.User vkUser = 
+                     Api.Get().Users.Get(new string[] { id }).First();
+
+                    try
+                    {
+                        fullName = vkUser.FirstName + " " + vkUser.LastName;
+                        if (fullName == "")
+                            throw new Exception();
+                    }
+                    catch (Exception)
+                    {
+                        fullName = "ФИО недоступно";
+                    }
+
+                    try
+                    {
+                        photoURL = vkUser.PhotoMax.AbsoluteUri;//Photo200.AbsoluteUri;
+                        if (photoURL == "")
+                            throw new Exception();
+                    }
+                    catch (Exception)
+                    {
+                        photoURL = "https://vk.com/images/camera_200.png?ava=1";
+                    }
+
+                    string s = "";
+                    int i = 0;
+
+                    try
+                    {
+                        s = vkUser.Status;
+                        if (s != null & s != "")
+                            description.Add("статус: " + s);
+                    }
+                    catch (Exception) { }
+
+                    try
+                    {
+                        s = "пол: ";
+                        i = (int)vkUser.Sex;
+                        switch (i)
+                        {
+                            case 0:
+                                s += "не указан";
+                                break;
+
+                            case 1:
+                                s += "женский";
+                                break;
+
+                            case 2:
+                                s += "мужской";
+                                break;
+                        }
+                        description.Add(s);
+                    }
+                    catch (Exception) { }
+
+                    try
+                    {
+                        s = vkUser.Country.Title;
+                        if (s != null & s != "")
+                            description.Add("страна: " + s);
+                    }
+                    catch (Exception) { }
+
+                    try
+                    {
+                        s = vkUser.City.Title;
+                        if (s != null & s != "")
+                            description.Add("город: " + s);
+                    }
+                    catch (Exception) { }
+
+                    try
+                    {
+                        s = vkUser.MobilePhone;
+                        if (s != null & s != "")
+                            description.Add("моб. тел.: " + s);
+                    }
+                    catch (Exception) { }
+
+
                 }
                 else
                 {

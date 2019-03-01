@@ -30,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Template/src/css/index.css")">
 
 
-    </head>
+</head>
 <body>
 
     <div class="logobox">
@@ -49,32 +49,73 @@
         </nav>
     }
     <div class="data">
-        <div class="contblock" id="Latency">
+        <div class="contblock" id="Type">
             <div class="contdescr">
-                <img src="~/Content/Template/src/img/graph.png" style="position: absolute; margin-left: 15px;" />
+                <img src="~/Content/Template/src/img/robo-logo-black.png" style="
+                            position: absolute;
+        margin-left: 11px;
+        height: 55px;
+        width: 55px;
+        margin-top: -2px;    margin-bottom: 150px;" />
                 <div>
-                    <h3>Частота появления слов</h3>
+                    <h3>Оценка типа аккаунта</h3>
                 </div>
                 <button class="hidebutton" type="submit">
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata" style="display: block;"></div>
-        </div>
+            <div class="contdata" style="display: block;">
+                @if (Model != null && PageDataModel.isLinkValid)
+                {
+                    double prob = PageDataModel.BotProbability;
+                    double suic = PageDataModel.SuicideProbability;
 
-        <div class="contblock" id="Test">
-            <div class="contdescr">
-                <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
-                <div>
-                    <h3>Типология Майерс-Бриггс</h3>
-                </div>
-                <button class="hidebutton" type="submit">
-                    <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
-                </button>
+                    <h4>
+                        Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
+                    </h4>
+                    if (prob > 0.5)
+                    {
+                        <p>
+                            Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            Скорее всего аккаунт является персональной страницей настоящего человека.
+                        </p>
+                    }
+                    if (PageDataModel.HasWords)
+                    {
+                        <h4>
+                            Вероятность наличия суицидальных наклонностей у пользователя: @string.Format("{0:f2}", suic)
+                        </h4>
+
+                        if (suic > 0.2)
+                        {
+                            <p>
+                                Такой уровень показателя может свидетельствовать об опасности для пользователя,
+                                и являться причиной для обращения за квалифицированной помощью.
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                Содержание постов пользователя не выражает суицидальных наклонностей и имеет в целом нейтральный окрас.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <h4>Невозможно предсказать суицидальные наклонности. Нет общедоступных данных.</h4>
+                    }
+                    <p>
+                        Анализ суицидальных наклонностей проводится на основании содержания текстов на странице с использованием технологии глубокого обучения.
+                    </p>
+
+                }
             </div>
-            <div class="contdata" style="display: block;"></div>
         </div>
-
         <div class="contblock" id="Rare">
             <div class="contdescr">
                 <img src="~/Content/Template/src/img/latency.png" style="position: absolute; margin-left: 15px;" />
@@ -97,20 +138,20 @@
                             {
                                 String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                                 <li>
-                                        <a href="@link">
-                                            @item.Item1
-                                        </a>
-                                            <ul>
-                                                @foreach (String word in item.Item2)
-            {
-                link = PageDataModel.PopularWordsAtributes.dictLink + word;
-                                    <li>
-                                        <a href="@link">
-                                            @word
-                                        </a>
-                                    </li>
-}
-                                            </ul>
+                                    <a href="@link">
+                                        @item.Item1
+                                    </a>
+                                    <ul>
+                                        @foreach (String word in item.Item2)
+                                        {
+                                            link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                                            <li>
+                                                <a href="@link">
+                                                    @word
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
                                 </li>
                             }
                         </ol>
@@ -122,81 +163,49 @@
                 }
             </div>
         </div>
-        <div class="contblock" id="Type">
+        <div class="contblock" id="Test">
             <div class="contdescr">
-                <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            position: absolute;
-        margin-left: 11px;
-        height: 55px;
-        width: 55px;
-        margin-top: -2px;    margin-bottom: 150px;" />
+                <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
                 <div>
-                    <h3>Оценка типа аккаунта</h3>
+                    <h3>Типология Майерс-Бриггс</h3>
                 </div>
                 <button class="hidebutton" type="submit">
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata" style="display: block;">
-                @if (Model != null && PageDataModel.isLinkValid)
-    {
-        double prob = PageDataModel.BotProbability;
-        double suic = PageDataModel.SuicideProbability;
-
-            <h4>
-                Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
-            </h4>
-            if (prob > 0.5)
-{
-            <p>
-                Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
-            </p>
-}
-else
-{
-            <p>
-                Скорее всего аккаунт является персональной страницей настоящего человека.
-            </p>
-}
-                    if (PageDataModel.HasWords)
-                    {
-
-                    
-            <h4>
-                Вероятность наличия суицидальных наклонностей у пользователя: @string.Format("{0:f2}",suic)
-            </h4>
-                    
-                    if (suic > 0.2)
-                    {
-                       <p>
-                           Такой уровень показателя может свидетельствовать об опасности для пользователя,
-                           и являться причиной для обращения за квалифицированной помощью. 
-                       </p>
-                    }
-                    else
-                    {
-                        <p>
-                            Содержание постов пользователя не выражает суицидальных наклонностей и имеет в целом нейтральный окрас.
-                        </p>
-                        }
-                    }
-                    else
-                    {
-                        <h4>Невозможно предсказать суицидальные наклонности. Нет общедоступных данных.</h4>
-                    }
-                        <p>
-                            Анализ суицидальных наклонностей проводится на основании содержания текстов на странице с использованием технологии глубокого обучения.
-                        </p>
-
-                }
-
-
-                }
-            </div>
+            <div class="contdata" style="display: block;"></div>
         </div>
+
+        <div class="contblock" id="Latency">
+            <div class="contdescr">
+                <img src="~/Content/Template/src/img/graph.png" style="position: absolute; margin-left: 15px;" />
+                <div>
+                    <h3>Частота появления слов</h3>
+                </div>
+                <button class="hidebutton" type="submit">
+                    <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
+                </button>
+            </div>
+            <div class="contdata" style="display: block;"></div>
+        </div>
+
+
     </div>
     <div class="info">
         <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
+        <div class="contdata">
+            <h4>
+                @PageDataModel.FullName
+            </h4>
+            <ul>
+                @foreach (string descr in PageDataModel.Description)
+                {
+                    <li>
+                        @descr
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
     <div class="nav">
         <div class="navbuttons">
@@ -224,10 +233,11 @@ else
                     <h3>Поиск</h3>
                 </button>
             </div>
-            <div class="image">
+            <div style="width:auto; height:auto;">
+                <img class="image" src="@PageDataModel.PhotoURL" />
             </div>
         </div>
     </div>
 </body>
-    <script src="~/Content/Template/src/js/script.js"></script>
+<script src="~/Content/Template/src/js/script.js"></script>
 </html>

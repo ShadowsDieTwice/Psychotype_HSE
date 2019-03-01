@@ -45,7 +45,7 @@ namespace Psychotype_HSE.Models
             PythonScriptPath = @"../../Util/Scripts/suicideScript.py";
             UserPosts = @"../../Files/userPosts.csv";
             SuicideResult = @"../../Files/suicide_result.txt";
-            WorkingDir = @"../../Files/";
+            WorkingDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";
         }
     }
 }

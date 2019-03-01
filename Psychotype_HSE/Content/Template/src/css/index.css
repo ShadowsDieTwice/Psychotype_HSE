@@ -173,12 +173,16 @@ h1,h2,h3
 	grid-row-start: 2;
   	grid-column-start: 4;
   	grid-column-end: 5;
+
   	width:auto;
-  	height: 300px;
-  	background-color: #fff8f8;
-  	border: 1px solid #2e3441;
+  	height: 0;
+    background-color: #fff8f8;
   	margin-left: 10px;
 }
+
+    .info > .contdata {
+        border: 1px solid #2e3441;
+    }
 
 .nav
 {
@@ -193,26 +197,26 @@ h1,h2,h3
 	width: 100%;
 }
 
-.image
-{
-	height: 340px;
-	width: 340px ;
-	right: 380px;
-	top: -370px;
-
-	background-color: #fff8f8;
-	border: 1px solid #2e3441;
-
-	position: relative;
-  	bottom: 210px;
-  	z-index: 100;
+.image {
+    height: 338px;
+    width: 338px;
+    right: 380px;
+    top: -370px;
+    background-color: #fff8f8;
+    border: 1px solid #2e3441;
+    position: relative;
+    bottom: 210px;
+    z-index: 100;
+    border-radius: 3px;
+    padding: 1px;
+    margin: 1px;
 }
-
-.navbuttons
-{
-	margin: auto;
-	width: auto;
-}
+    
+    
+    .navbuttons {
+        margin: auto;
+        width: auto;
+    }
 
 .searchbutton
 {
