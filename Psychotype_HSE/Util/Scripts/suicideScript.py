@@ -55,10 +55,10 @@ def get_sequences(tokenizer, x):
     sequences = tokenizer.texts_to_sequences(x)
     return pad_sequences(sequences, maxlen=SENTENCE_LENGTH)
 
-model = load_model(r'C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\suicide_model2.h5', custom_objects={'precision': precision, 'recall': recall, 'f1': f1})
+model = load_model(r'C:\Users\Michael\Desktop\grudina\suicide ML\suicide_model2.h5', custom_objects={'precision': precision, 'recall': recall, 'f1': f1})
 
-with open(r'C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\tokenizer.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
+with open(r'M:/Grudina/HSE psychotype2/Psychotype_HSE/Util/Scripts/tokenizer.pickle', 'rb') as handle:
+	tokenizer = pickle.load(handle)
 
 # Высота матрицы (максимальное количество слов в посте)
 SENTENCE_LENGTH = 250
@@ -75,17 +75,19 @@ while True :
     if (len(os.listdir(workingDir)) != 0):
         for file in os.listdir(workingDir):
             if file.endswith(".csv"):
+                print("hehehheehe")
                 try:
                     id = os.path.splitext(os.path.basename(file))[0]
                     
-                    filePathStart = workingDir + id + '.csv'
-                    filePathRes = workingDir + id + '.txt'
-                    
-                    fileFrom = open(filePathStart, mode="r", encoding="utf-8", errors="ignore")
+                    filePathStart = workingDir + '\\' + id + '.csv'
+                    filePathRes = workingDir + '\\' + id + '.txt'
+                    print(filePathStart)
+                    fileFrom = io.open(filePathStart, mode="r", encoding="utf-8")
                     fileTo = open(filePathRes, 'a')
 
                     lines = fileFrom.readlines()
-        
+                    print(filePathRes)
+                    print(lines)
                     for text in lines: 
                         text = preprocess_text(text)
                         text_fin = get_sequences(tokenizer, [text])
@@ -98,6 +100,7 @@ while True :
                     os.remove(filePathStart)
                 except:
                     sleep(0.5)
+                    print("ERror")
                 #os.rename(filePathCSV, filePathCSV + ".temp")
         
 """

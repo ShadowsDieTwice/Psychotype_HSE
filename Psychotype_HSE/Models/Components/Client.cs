@@ -117,8 +117,8 @@ namespace Psychotype_HSE.Models.Components
             //    readFile = AppSettings.SuicideResult;
             //if (writeFile == null)
             //    writeFile = AppSettings.SuicidePredictCSV;
-            string writeFile = dir + id + ".csv";
-            string readFile = dir + id + ".txt";
+            string writeFile = dir + "\\" + id + ".csv";
+            string readFile = dir + "\\" + id + ".txt";
 
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
             SaveTextsToCSV(timeFrom, timeTo, writeFile);// + ".temp");

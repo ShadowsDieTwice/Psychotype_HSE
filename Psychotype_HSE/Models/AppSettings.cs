@@ -38,14 +38,15 @@ namespace Psychotype_HSE.Models
         public static string WorkingDir { get; set; }
 
         static AppSettings()
-        { 
+        {
             ApplicationId = 6752080;
-            AccessToken = "Access_Token";          
-            PythonPath = @"Python_Path";
-            PythonScriptPath = @"../../Util/Scripts/suicideScript.py";
-            //UserPosts = @"../../Files/userPosts.csv";
-            //SuicideResult = @"../../Files/suicide_result.txt";
-            WorkingDir = @"../../Files/";
+            AccessToken = "b363d2c380dd3228567608a058abefdb0249a4bf1274455e6ce12ebef5a46c5f06606b214379e8b0c4069";
+            PythonPath = @"M:\anaconda\python.exe";
+            PythonScriptPath = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Util/Scripts/suicideScript.py";
+            //PythonPsychotypeScriptPath = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Util/Scripts/psychotypeScript.py";
+            //UserPosts = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/userPosts.csv";
+            //SuicideResult = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/suicide_result.txt";
+            WorkingDir = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/";
         }
     }
 }
