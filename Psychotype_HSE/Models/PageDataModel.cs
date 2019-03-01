@@ -40,56 +40,56 @@ namespace Psychotype_HSE.Models
             }
         }
 
-        static DateTime timeFrom = new DateTime(2006, 1, 1);
-        static DateTime timeTo = DateTime.Now;
-        static int numberOfWord = 10;
+        DateTime timeFrom = new DateTime(2006, 1, 1);
+        DateTime timeTo = DateTime.Now;
+        int numberOfWord = 10;
 
 
-        private static String id = "";
-        private static double botProbability = 0;
-        private static double suicideProbability = 0;
-        private static bool hasWords = false;
-        private static PopularWordsAtributes popularWords = new PopularWordsAtributes();
-        private static string fullName = "Имя Фамилия";
-        private static string photoURL = "https://vk.com/images/camera_200.png?ava=1";
-        private static List<string> description = new List<string>();
+        private String id = "";
+        private double botProbability = 0;
+        private double suicideProbability = 0;
+        private bool hasWords = false;
+        private PopularWordsAtributes popularWords = new PopularWordsAtributes();
+        private string fullName = "Имя Фамилия";
+        private string photoURL = "https://vk.com/images/camera_200.png?ava=1";
+        private List<string> description = new List<string>();
 
-        static public string FullName
+        public string FullName
         {
             get { return fullName;  }
         }
 
-        static public string PhotoURL
+        public string PhotoURL
         {
             get { return photoURL; }
         }
 
-        static public List<string> Description
+        public List<string> Description
         {
             get { return description; }
         }
 
-        static public double BotProbability
+        public double BotProbability
         {
             get { return botProbability; }
         }
 
-        static public double SuicideProbability
+        public double SuicideProbability
         {
             get { return suicideProbability; }
         }
 
-        static public bool HasWords
+        public bool HasWords
         {
             get { return hasWords; }
         }
 
-        static public PopularWordsAtributes PopularWords
+        public PopularWordsAtributes PopularWords
         {
             get { return popularWords; }
         }
 
-        static public bool isLinkValid { set; get; }
+        public bool isLinkValid { set; get; }
 
         public String Id
         {
@@ -144,21 +144,22 @@ namespace Psychotype_HSE.Models
                 if (isLinkValid)
                 {
                     //string curDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";// Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/Files/"; //.GetCurrentDirectory();
-                    string fileData = AppSettings.WorkingDir + id + ".csv";
-                    string fileRes = AppSettings.WorkingDir + id + ".txt";
-                    
+                    //string fileData = AppSettings.WorkingDir + id + ".csv";
+                    //string fileRes = AppSettings.WorkingDir + id + ".txt";
+
                     //"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Files\"
 
                     // вызывается отдельно
                     //Util.PythonRunner.RunScript("C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Util\\Scripts\\suicideScript.py",
                     //    AppSettings.PythonPath, curDir);//, fileData);
+                    var api = Api.Get();
 
                     popularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
 
-                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, AppSettings.WorkingDir, id );
+                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, AppSettings.WorkingDir, id);
 
-                    VkNet.Model.User vkUser = 
-                     Api.Get().Users.Get(new string[] { id }).First();
+                    VkNet.Model.User vkUser =
+                     api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
 
                     try
                     {
@@ -171,75 +172,86 @@ namespace Psychotype_HSE.Models
                         fullName = "ФИО недоступно";
                     }
 
-                    try
-                    {
-                        photoURL = vkUser.PhotoMax.AbsoluteUri;//Photo200.AbsoluteUri;
-                        if (photoURL == "")
-                            throw new Exception();
-                    }
-                    catch (Exception)
-                    {
-                        photoURL = "https://vk.com/images/camera_200.png?ava=1";
-                    }
+                    photoURL = vkUser.Photo50.AbsoluteUri;// vkUser.PhotoMax.AbsoluteUri;//Photo200.AbsoluteUri;
 
                     string s = "";
                     int i = 0;
 
-                    try
-                    {
-                        s = vkUser.Status;
-                        if (s != null & s != "")
-                            description.Add("статус: " + s);
-                    }
-                    catch (Exception) { }
+                    s = vkUser.Status;
+                    if (s != null & s != "")
+                        description.Add("статус: " + s);
+                    s = "";
 
-                    try
+                    s = "пол: ";
+                    i = (int)vkUser.Sex;
+                    switch (i)
                     {
-                        s = "пол: ";
-                        i = (int)vkUser.Sex;
+                        case 0:
+                            s += "не указан";
+                            break;
+
+                        case 1:
+                            s += "женский";
+                            break;
+
+                        case 2:
+                            s += "мужской";
+                            break;
+                    }
+                    description.Add(s);
+                    s = "";
+                    
+                        if (vkUser.Country != null)
+                            description.Add("страна: " + vkUser.Country.Title);
+                    s = "";
+                    
+                        if (vkUser.City != null)
+                            description.Add("город: " + vkUser.City.Title);
+                        s = "";
+
+                    s = vkUser.MobilePhone;
+                    if (s != null & s != "")
+                        description.Add("моб. тел.: " + s);
+                    s = "";
+
+                    s = vkUser.HomePhone;
+                    if (s != null & s != "")
+                        description.Add("дом. тел.: " + s);
+
+                    s = "отношения: ";
+                    if (vkUser.Relation != null)
+                    {
+                        i = (int)vkUser.Relation;
                         switch (i)
                         {
-                            case 0:
-                                s += "не указан";
+                            case (1):
+                                description.Add(s + "не женат/ замужем");
                                 break;
-
-                            case 1:
-                                s += "женский";
+                            case (2):
+                                description.Add(s + "есть друг/ подруга");
                                 break;
-
-                            case 2:
-                                s += "мужской";
+                            case (3):
+                                description.Add(s + "помолвлен(а)");
+                                break;
+                            case (4):
+                                description.Add(s + "женат(а)");
+                                break;
+                            case (5):
+                                description.Add(s + "всё сложно");
+                                break;
+                            case (6):
+                                description.Add(s + "в активном поиске");
+                                break;
+                            case (7):
+                                description.Add(s + "влюблен(а)");
+                                break;
+                            case (8):
+                                description.Add(s + "в гражданском браке");
+                                break;
+                            default:
                                 break;
                         }
-                        description.Add(s);
                     }
-                    catch (Exception) { }
-
-                    try
-                    {
-                        s = vkUser.Country.Title;
-                        if (s != null & s != "")
-                            description.Add("страна: " + s);
-                    }
-                    catch (Exception) { }
-
-                    try
-                    {
-                        s = vkUser.City.Title;
-                        if (s != null & s != "")
-                            description.Add("город: " + s);
-                    }
-                    catch (Exception) { }
-
-                    try
-                    {
-                        s = vkUser.MobilePhone;
-                        if (s != null & s != "")
-                            description.Add("моб. тел.: " + s);
-                    }
-                    catch (Exception) { }
-
-
                 }
                 else
                 {
@@ -251,9 +263,12 @@ namespace Psychotype_HSE.Models
             }
         }
 
-        static Components.User user = new Components.User("");
+        Components.User user = new Components.User("");
 
         //static public Components.User User { get { return user; }  }
-        
+
+        public PageDataModel() : this("") { }
+        public PageDataModel(string raw_id) { this.Id = raw_id;  }
+
     }
 }

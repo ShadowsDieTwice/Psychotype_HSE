@@ -179,6 +179,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AppSettings.cs" />
+    <Compile Include="Models\ButtonDataModel.cs" />
     <Compile Include="Models\Components\Client.cs" />
     <Compile Include="Models\Components\Community.cs" />
     <Compile Include="Models\Components\RussianStemmer.cs" />

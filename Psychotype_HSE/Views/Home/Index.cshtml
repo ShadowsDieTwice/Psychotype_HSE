@@ -34,15 +34,28 @@
 <body>
 
     <div class="logobox">
-        <a class="logo">
+        <span class="logo">
             PHSE'19
-        </a>
+            @if (Model.isLinkValid)
+            {
+                <a href="https://vk.com/@Model.Id">
+                    <div style="float:right; margin-left:15px;">
+                        <img class="image" src="@Model.PhotoURL" />
+                    </div>
+                </a>
+            }
+            else
+            {
+                <div style="float:right; margin-left:15px;">
+                    <img class="image" src="@Model.PhotoURL" />
+                </div>
+            }
+        </span>
     </div>
-    @using (Html.BeginForm("MostPopularWords", "Home", FormMethod.Post))
+    @using (Html.BeginForm("Index", "Home", FormMethod.Get))
     {
         <nav class="searchbar">
-            @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id существующего открытого профиля vk.com", @class = "searchline" })
-            @Html.ValidationMessageFor(m => m.Id)
+            @Html.TextBox("query")
             <button class="searchbutton" type="submit">
                 <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
             </button>
@@ -52,11 +65,11 @@
         <div class="contblock" id="Type">
             <div class="contdescr">
                 <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            position: absolute;
-        margin-left: 11px;
-        height: 55px;
-        width: 55px;
-        margin-top: -2px;    margin-bottom: 150px;" />
+                                position: absolute;
+            margin-left: 11px;
+            height: 55px;
+            width: 55px;
+            margin-top: -2px;    margin-bottom: 150px;" />
                 <div>
                     <h3>Оценка типа аккаунта</h3>
                 </div>
@@ -65,10 +78,15 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null && PageDataModel.isLinkValid)
+                @if (!Model.isLinkValid)
                 {
-                    double prob = PageDataModel.BotProbability;
-                    double suic = PageDataModel.SuicideProbability;
+                    <p>Предсказание вероятности того, что профиль является "фейком" или "ботом".</p>
+                    <p>Предсказание наличия суицидальных наклонностей у пользователя по его записям.</p>
+                }
+                @if (Model != null && Model.isLinkValid)
+                {
+                    double prob = Model.BotProbability;
+                    double suic = Model.SuicideProbability;
 
                     <h4>
                         Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
@@ -85,7 +103,7 @@
                             Скорее всего аккаунт является персональной страницей настоящего человека.
                         </p>
                     }
-                    if (PageDataModel.HasWords)
+                    if (Model.HasWords)
                     {
                         <h4>
                             Вероятность наличия суицидальных наклонностей у пользователя: @string.Format("{0:f2}", suic)
@@ -127,12 +145,17 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null && PageDataModel.isLinkValid)
+                @if (!Model.isLinkValid)
+                {
+                    <p>Часто употребимые в записях пользователя слова.</p>
+                }
+                @if (Model != null && Model.isLinkValid)
                 {
 
-                    if (PageDataModel.HasWords)
+                    if (Model.HasWords)
                     {
-                        List<Tuple<String, List<String>>> popularWords = PageDataModel.PopularWords.response;
+                        <h4>Самые популярные однокоренные слова в порядке их появления на странице:</h4>
+                        List<Tuple<String, List<String>>> popularWords = Model.PopularWords.response;
                         <ol>
                             @foreach (Tuple<String, List<String>> item in popularWords)
                             {
@@ -155,6 +178,7 @@
                                 </li>
                             }
                         </ol>
+                        <p>Для всех слов доступна ссылка на словарь.</p>
                     }
                     else
                     {
@@ -173,32 +197,30 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata" style="display: block;"></div>
-        </div>
+            <div class="contdata" style="display: block;">
+                @if (!Model.isLinkValid)
+                {
+                    <p>Предсказание результата теста Майерс-Бриггс на основании данных профиля.</p>
+                }
 
-        <div class="contblock" id="Latency">
-            <div class="contdescr">
-                <img src="~/Content/Template/src/img/graph.png" style="position: absolute; margin-left: 15px;" />
-                <div>
-                    <h3>Частота появления слов</h3>
-                </div>
-                <button class="hidebutton" type="submit">
-                    <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
-                </button>
             </div>
-            <div class="contdata" style="display: block;"></div>
         </div>
-
-
     </div>
     <div class="info">
-        <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
+        <div class="contdescr">
+            <h3 style="margin-left: 35px;">Информация профиля</h3>
+        </div>
         <div class="contdata">
+
             <h4>
-                @PageDataModel.FullName
+                @Model.FullName
             </h4>
+            @if (!Model.isLinkValid)
+            {
+                <p>Описание профиля</p>
+            }
             <ul>
-                @foreach (string descr in PageDataModel.Description)
+                @foreach (string descr in Model.Description)
                 {
                     <li>
                         @descr
@@ -210,31 +232,22 @@
     <div class="nav">
         <div class="navbuttons">
             <div class="buttongroup">
-                <button class="navbutton" onclick=" window.location.href='#Latency'">
-                    <img src="~/Content/Template/src/img/graph.png" />
-                    <h3>Частоты слов</h3>
+                <button class="navbutton" onclick=" window.location.href='#Rare'">
+                    <img src="~/Content/Template/src/img/latency.png" />
+                    Слова
+                </button>
+                <button class="navbutton" onclick=" window.location.href='#Type'">
+                    <img src="~/Content/Template/src/img/robo-logo-black.png" />
+                    Тип
                 </button>
                 <button class="navbutton" onclick=" window.location.href='#Test'">
                     <img src="~/Content/Template/src/img/test_partial_passed1600.png">
-                    <h3>Типология</h3>
-                </button>
-                <button class="navbutton" onclick=" window.location.href='#Rare'">
-                    <img src="~/Content/Template/src/img/latency.png" />
-                    <h3>Популярные</h3>
-                </button>
-                <button class="navbutton" onclick=" window.location.href='#Type'">
-                    <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            height: 55px;
-                            width: 55px;" />
-                    <h3 style="margin-left: 20px; margin-top: 9px;">Тип</h3>
+                    Тест
                 </button>
                 <button class="navbutton" onclick="document.getElementsByClassName('searchline')[0].focus()">
                     <img src="~/Content/Template/src/img/palm-scan.png" />
-                    <h3>Поиск</h3>
+                    Поиск
                 </button>
-            </div>
-            <div style="width:auto; height:auto;">
-                <img class="image" src="@PageDataModel.PhotoURL" />
             </div>
         </div>
     </div>

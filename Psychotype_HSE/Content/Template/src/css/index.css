@@ -12,6 +12,7 @@
 h4, p {
     font-family: Andika, Arial, Tahoma;
     font-color: black;
+    margin-top: 15px;
     margin-right: 30px;
     margin-left: 30px;
     margin-bottom: 0px;
@@ -58,16 +59,6 @@ img
   	grid-column-end: 3;
 }
 
-.logo
-{
-	float: right;
- 	font-family: Molot;
-  	font-size: 36px;
-  	color: #2e3441;
-
-  	margin-top: 15px;
-  	margin-right: 30px;
-}
 
  .searchbar
  {
@@ -107,6 +98,7 @@ input {
     font: 18px Andika, Arial, Tahoma;
     line-height: 26px;
     outline: none;
+    height: 17px;
 }
 
 input:focus{
@@ -162,61 +154,44 @@ h1,h2,h3
 {
 	color: white;
  	font-family: BeerMoney;
-  	font-size: 30px;
+  	font-size: 26px;
   	margin: 0px;
   	vertical-align: center;
   	margin-left: 80px;
 }
 
-.info
-{
-	grid-row-start: 2;
-  	grid-column-start: 4;
-  	grid-column-end: 5;
-
-  	width:auto;
-  	height: 0;
+.info {
+    grid-row-start: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    width: auto;
+    height: 0;
     background-color: #fff8f8;
-  	margin-left: 10px;
+    margin-right: 10px;
 }
 
     .info > .contdata {
         border: 1px solid #2e3441;
     }
 
-.nav
-{
-	display: flex;
-	position:fixed;
-	background-color: #fff8f8;
-	border-top: 1px solid grey;
-
-	opacity: 1;
-	bottom: 0px;
-	height: 80px;
-	width: 100%;
-}
-
-.image {
-    height: 338px;
-    width: 338px;
-    right: 380px;
-    top: -370px;
+.nav {
+    text-align: center;
+    position: fixed;
     background-color: #fff8f8;
-    border: 1px solid #2e3441;
-    position: relative;
-    bottom: 210px;
-    z-index: 100;
-    border-radius: 3px;
-    padding: 1px;
-    margin: 1px;
+    border-top: 1px solid grey;
+    opacity: 1;
+    bottom: 0px;
+    height: 55px;
+    width: 100%;
 }
-    
-    
-    .navbuttons {
-        margin: auto;
-        width: auto;
-    }
+
+
+.navbuttons {
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+    width: auto;
+}
 
 .searchbutton
 {
@@ -241,52 +216,39 @@ h1,h2,h3
     cursor: pointer;
 }
 
-.navbutton
-{
-	width: 180px;
-	border: none;
-	height: 87px;
-	background-color: #2e3441;
-	border: 1px solid #fff8f8;
-	margin: 0px;
-	padding: 0px;
-
-	position: relative;
-  	left: 0px;
+.navbutton {
+    width: 225px;
+    border: none;
+    height: 65px;
+    background-color: #2e3441;
+    border: 1px solid #fff8f8;
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    left: 0px;
+    color: white;
+    font-family: BeerMoney;
+    font-size: 22px;
 }
 .navbutton:active
 {
-	width: 180px;
-	height: 84px;
+	height: 63px;
 }
 
-.navbutton img
-{
-	height: 40px;
-	width: 40px;
-	position: relative;
-	float: left;
-	margin-left: 12px;
-}
-.navbutton h3
-{
-	float: left;
-	color: white;
- 	font-family: BeerMoney;
-  	font-size: 21px;
-  	line-height: 36px;
-  	margin: 0px;
-  	margin-left: 11px;
-}
+    .navbutton img {
+        height: 40px;
+        width: 40px;
+        position: absolute;
+        left: 21px;
+        top: 10px;
+    }
 
-.buttongroup
-{
-	margin-top: -5px;
-	width: 900px;
-	height: 80px;
-	background-color: none;
-	display: table;
-
+.buttongroup {
+    margin-top: -5px;
+    width: 900px;
+    height: 80px;
+    display: table;
+    border: none;
 }
 
 .buttongroup:after {
@@ -297,10 +259,6 @@ h1,h2,h3
 
 .buttongroup button:not(:last-child) {
   border-right: none; /* Prevent double borders */
-}
-
-.buttongroup button:hover {
-  background-color: #354567;
 }
 
 
@@ -353,6 +311,46 @@ h1,h2,h3
 
 ol {
     margin: 10px;
+    margin-top: 20px;
+    margin-left: 20px;
     font-family: Andika, Arial, Tahoma;
     font-size: 18px;
+}
+
+a:link {
+    color: #2e3441;
+}
+
+
+a:visited {
+    color: black;
+}
+
+
+a:hover, a:active {
+    color: #354567;
+    font-weight: bold;
+}
+
+span.logo {
+    float: right;
+    line-height: 58px;
+    font-family: Molot;
+    font-size: 40px;
+    color: #2e3441;
+    margin-top: 8px;
+    padding-top: 0px;
+    margin-right: 30px;
+}
+
+.image {
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    background-color: #fff8f8;
+    border: 1px solid #2e3441;
+    position: relative;
+    z-index: 100;
+    padding: 1px;
+    margin: 5px;
 }

@@ -40,12 +40,12 @@ namespace Psychotype_HSE.Models
         static AppSettings()
         { 
             ApplicationId = 6752080;
-            AccessToken = "fa87d488d3e7e27151c6cab1d562f5a039fa82930b57054891fb5a6dcbbf746406b4f026479210d3fb859";          
-            PythonPath = @"C:\\ProgramData\\Anaconda3\\python.exe";
+            AccessToken = "Access_Token";          
+            PythonPath = @"Python_Path";
             PythonScriptPath = @"../../Util/Scripts/suicideScript.py";
-            UserPosts = @"../../Files/userPosts.csv";
-            SuicideResult = @"../../Files/suicide_result.txt";
-            WorkingDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";
+            //UserPosts = @"../../Files/userPosts.csv";
+            //SuicideResult = @"../../Files/suicide_result.txt";
+            WorkingDir = @"../../Files/";
         }
     }
 }
