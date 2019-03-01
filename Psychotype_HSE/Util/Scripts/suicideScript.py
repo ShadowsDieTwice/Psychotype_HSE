@@ -1,6 +1,14 @@
 import io
 from keras import backend as K
-
+from keras.models import load_model
+import re
+import pickle
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+import numpy as np
+import sys
+import os
+from time import sleep
 
 def precision(y_true, y_pred):
     """Precision metric.
@@ -35,12 +43,6 @@ def f1(y_true, y_pred):
     recall1 = recall(y_true, y_pred)
     return 2 * ((precision1 * recall1) / (precision1 + recall1 + K.epsilon()))
 
-from keras.models import load_model
-
-model = load_model(r'M:\Grudina\HSE psychotype2\Psychotype_HSE\Util\Scripts\suicide_model2.h5', custom_objects={'precision': precision, 'recall': recall, 'f1': f1})
-
-import re
-
 def preprocess_text(text):
     text = text.lower().replace("ё", "е")
     text = re.sub('((www\.[^\s]+)|(https?://[^\s]+))', 'URL', text)
@@ -49,37 +51,56 @@ def preprocess_text(text):
     text = re.sub(' +', ' ', text)
     return text.strip()
 
-import pickle
+def get_sequences(tokenizer, x):
+    sequences = tokenizer.texts_to_sequences(x)
+    return pad_sequences(sequences, maxlen=SENTENCE_LENGTH)
 
-with open(r'M:\Grudina\HSE psychotype2\Psychotype_HSE\Util\Scripts\tokenizer.pickle', 'rb') as handle:
+model = load_model(r'C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\suicide_model2.h5', custom_objects={'precision': precision, 'recall': recall, 'f1': f1})
+
+with open(r'C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\tokenizer.pickle', 'rb') as handle:
     tokenizer = pickle.load(handle)
-
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-import numpy as np
 
 # Высота матрицы (максимальное количество слов в посте)
 SENTENCE_LENGTH = 250
 # Размер словаря
 NUM = 100000
 
-def get_sequences(tokenizer, x):
-    sequences = tokenizer.texts_to_sequences(x)
-    return pad_sequences(sequences, maxlen=SENTENCE_LENGTH)
-
-
-
-import sys
-import os
-
 """fileShutdown = str(sys.argv[3])"""
 
-filePathCSV = str(sys.argv[1])
-
-filePathStart = str(sys.argv[2])
-
+#filePathCSV = str(sys.argv[1])
+workingDir = str(sys.argv[1])
+#filePathStart = str(sys.argv[2])
 
 while True :
+    if (len(os.listdir(workingDir)) != 0):
+        for file in os.listdir(workingDir):
+            if file.endswith(".csv"):
+                try:
+                    id = os.path.splitext(os.path.basename(file))[0]
+                    
+                    filePathStart = workingDir + id + '.csv'
+                    filePathRes = workingDir + id + '.txt'
+                    
+                    fileFrom = open(filePathStart, mode="r", encoding="utf-8", errors="ignore")
+                    fileTo = open(filePathRes, 'a')
+
+                    lines = fileFrom.readlines()
+        
+                    for text in lines: 
+                        text = preprocess_text(text)
+                        text_fin = get_sequences(tokenizer, [text])
+                        predicted_test = np.round(model.predict(text_fin))
+        
+                        fileTo.write(str((predicted_test[0][0] + 1) % 2))
+                        fileTo.write("\n")
+                    fileTo.close()
+                    fileFrom.close()
+                    os.remove(filePathStart)
+                except:
+                    sleep(0.5)
+                #os.rename(filePathCSV, filePathCSV + ".temp")
+        
+"""
     if os.path.isfile(filePathStart) :
         fileFrom = open(filePathStart, mode="r", encoding="utf-8", errors="ignore")
         fileTo = open(filePathCSV, 'a')
@@ -97,7 +118,8 @@ while True :
         fileFrom.close()
         os.remove(filePathStart)
         os.rename(filePathCSV, filePathCSV + ".temp")
-"""if os.path.isfile(filePathStart) :
+        
+if os.path.isfile(filePathStart) :
 	file.write("hehehe")
 	fileFrom = io.open(filePathStart, mode="r", encoding="utf-8")
 	fileTo = open(filePathCSV, 'a')

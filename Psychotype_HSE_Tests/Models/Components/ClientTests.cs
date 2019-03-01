@@ -61,7 +61,7 @@ namespace Psychotype.Models.Components.Tests
             string filePath2 = @"../../TestFiles/suicide_result.txt";
 
             PythonRunner.RunScript(@"../../../Psychotype_HSE/Util/Scripts/suicideScript.py", AppSettings.PythonPath,
-                filePath2, filePath1);
+                filePath2);//, filePath1); // переписать тест
 
             double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, filePath1, filePath2);
             //+ Check correctness with your eyes
