@@ -41,7 +41,7 @@ html, body {
 
 body
 {
-	grid-template-columns: auto 340px 850px 340px auto;
+	grid-template-columns: auto 300px 700px 300px auto;
   	grid-template-rows: 100px auto;
   	display: grid;
 }
@@ -217,7 +217,7 @@ h1,h2,h3
 }
 
 .navbutton {
-    width: 225px;
+    width: 200px;
     border: none;
     height: 65px;
     background-color: #2e3441;
@@ -245,7 +245,7 @@ h1,h2,h3
 
 .buttongroup {
     margin-top: -5px;
-    width: 900px;
+    width: auto;
     height: 80px;
     display: table;
     border: none;

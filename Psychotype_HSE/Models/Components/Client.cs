@@ -164,7 +164,8 @@ namespace Psychotype_HSE.Models.Components
                 }
             }
 
-            
+
+
             File.Delete(readFile);
             //if (probs.Count != posts.Count)
             //    throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
