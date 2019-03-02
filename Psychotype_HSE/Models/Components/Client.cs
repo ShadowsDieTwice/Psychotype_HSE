@@ -95,8 +95,7 @@ namespace Psychotype_HSE.Models.Components
             foreach (Post post in wall.WallPosts)
             {
                 if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
-                    if (post.Text != "")
-                        curPosts.Add(post);
+                    curPosts.Add(post);
             }
 
             return curPosts;

@@ -46,7 +46,7 @@ namespace Psychotype_HSE.Models
             //PythonPsychotypeScriptPath = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Util/Scripts/psychotypeScript.py";
             //UserPosts = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/userPosts.csv";
             //SuicideResult = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/suicide_result.txt";
-            WorkingDir = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/";
+            WorkingDir = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files";
         }
     }
 }

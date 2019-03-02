@@ -75,7 +75,6 @@ while True :
     if (len(os.listdir(workingDir)) != 0):
         for file in os.listdir(workingDir):
             if file.endswith(".csv"):
-                print("hehehheehe")
                 try:
                     id = os.path.splitext(os.path.basename(file))[0]
                     
@@ -87,20 +86,20 @@ while True :
 
                     lines = fileFrom.readlines()
                     print(filePathRes)
-                    print(lines)
                     for text in lines: 
                         text = preprocess_text(text)
                         text_fin = get_sequences(tokenizer, [text])
                         predicted_test = np.round(model.predict(text_fin))
-        
+                        print('easter egg 1')
                         fileTo.write(str((predicted_test[0][0] + 1) % 2))
                         fileTo.write("\n")
                     fileTo.close()
                     fileFrom.close()
+                    print('easter egg 2')
                     os.remove(filePathStart)
                 except:
                     sleep(0.5)
-                    print("ERror")
+                    print('easter egg 3')
                 #os.rename(filePathCSV, filePathCSV + ".temp")
         
 """

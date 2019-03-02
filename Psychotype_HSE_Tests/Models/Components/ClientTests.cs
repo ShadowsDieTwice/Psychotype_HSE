@@ -62,7 +62,7 @@ namespace Psychotype.Models.Components.Tests
 
             PythonRunner.RunScript(@"../../../Psychotype_HSE/Util/Scripts/suicideScript.py", AppSettings.PythonPath,
                 workingDir);//, filePath1); // переписать тест
-
+                
             double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, AppSettings.WorkingDir, id);
             //+ Check correctness with your eyes
             Console.WriteLine(res);
