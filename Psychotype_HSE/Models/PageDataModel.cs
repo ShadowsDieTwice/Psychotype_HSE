@@ -258,8 +258,8 @@ namespace Psychotype_HSE.Models
                                 break;
                         }
                     }
-
-                    if (vkUser.Counters.Groups.HasValue && vkUser.Counters.Groups.Value != 0)
+                    //vkUser = api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.Counters).First();
+                    //if (vkUser.Counters.Groups.HasValue && vkUser.Counters.Groups.Value != 0)
                     {
                         s = "";
                         i = id.GetHashCode();
