@@ -87,6 +87,7 @@ namespace Psychotype_HSE.Models.Components
         public virtual List<Post> GetAllPosts(DateTime timeFrom, DateTime timeTo)
         {
             List<Post> curPosts = new List<Post>();
+            Thread.Sleep(300);
             WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
             {
                 OwnerId = VkId
@@ -120,7 +121,10 @@ namespace Psychotype_HSE.Models.Components
             string readFile = dir + "\\" + id + ".txt";
 
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            SaveTextsToCSV(timeFrom, timeTo, writeFile);// + ".temp");
+            if (!File.Exists(writeFile))
+            {
+                SaveTextsToCSV(timeFrom, timeTo, writeFile);// + ".temp");
+            }
             //File.Delete(writeFile);
             //File.Move(writeFile + ".temp", writeFile);
 
@@ -166,7 +170,14 @@ namespace Psychotype_HSE.Models.Components
 
 
 
-            File.Delete(readFile);
+            try
+            {
+                File.Delete(readFile);
+            }
+            catch
+            {
+
+            }
             //if (probs.Count != posts.Count)
             //    throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
 
@@ -174,7 +185,7 @@ namespace Psychotype_HSE.Models.Components
             double result = 0,  
                 normalizer = 0, //Sum of weights
                 w;
-            for(int i = 0; i < probs.Count; i++)
+            for(int i = 0; i < posts.Count; i++)
             {
                 w = PostWeight(posts[i]);
                 result += probs[i] * w;
