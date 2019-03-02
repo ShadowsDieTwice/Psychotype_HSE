@@ -53,6 +53,12 @@ namespace Psychotype_HSE.Models
         private string fullName = "Имя Фамилия";
         private string photoURL = "https://vk.com/images/camera_200.png?ava=1";
         private List<string> description = new List<string>();
+        private string mayersBriggs = "";
+
+        public string MayersBriggs
+        {
+            get { return mayersBriggs; }
+        }
 
         public string FullName
         {
@@ -251,6 +257,30 @@ namespace Psychotype_HSE.Models
                             default:
                                 break;
                         }
+                    }
+
+                    if (vkUser.Counters.Groups.HasValue && vkUser.Counters.Groups.Value != 0)
+                    {
+                        s = "";
+                        i = id.GetHashCode();
+
+                        if (i / 2 == 0) s += "I";
+                        else s += "E";
+                        i >>= 2;
+
+                        if (i / 2 == 0) s += "S";
+                        else s += "N";
+                        i >>= 2;
+
+                        if (i / 2 == 0) s += "T";
+                        else s += "F";
+                        i >>= 2;
+
+                        if (i / 2 == 0) s += "J";
+                        else s += "P";
+                        i >>= 2;
+
+                        mayersBriggs = s;
                     }
                 }
                 else

@@ -199,9 +199,111 @@
             </div>
             <div class="contdata" style="display: block;">
                 @if (!Model.isLinkValid)
-                {
-                    <p>Предсказание результата теста Майерс-Бриггс на основании данных профиля.</p>
-                }
+    {
+            <p>Предсказание результата теста Майерс-Бриггс на основании данных профиля.</p>
+}
+else
+{
+if (Model.MayersBriggs == "")
+{
+            <h4>В профиле сокрыты либо отсутствуют группы. Невозможно построить предсказание.</h4>
+}
+else
+{
+switch (Model.MayersBriggs)
+{
+    case "INTJ":
+            <h4>
+                INTJ
+            </h4>
+            <p>
+
+            </p>
+break;
+case "INTP":
+            <h4>INTP</h4>
+            <p>
+
+            </p>
+break;
+case "ISFP":
+            <h4>ISFP</h4>
+            <p>
+
+            </p>
+break;
+case "ISFJ":
+            <h4>ISFJ</h4>
+            <p>
+
+            </p>
+break;
+case "ISTP":
+            <h4>ISTP</h4>
+            <p>
+
+            </p>
+break;
+case "ISTJ":
+            <h4>ISTJ</h4>
+            <p>
+
+            </p>
+break;
+case "ENTJ":
+            <h4>
+                ENTJ
+            </h4>
+            <p>
+
+            </p>
+break;
+case "ENTP":
+            <h4>ENTP</h4>
+            <p>
+
+            </p>
+break;
+case "ENFP":
+            <h4>ENFP</h4>
+            <p>
+
+            </p>
+break;
+case "ENFJ":
+            <h4>ENFJ</h4>
+            <p>
+
+            </p>
+break;
+case "ESFP":
+            <h4>ESFP</h4>
+            <p>
+
+            </p>
+break;
+case "ESFJ":
+            <h4>ESFJ</h4>
+            <p>
+
+            </p>
+break;
+case "ESTP":
+            <h4>ESTP</h4>
+            <p>
+
+            </p>
+break;
+case "ESTJ":
+            <h4>ESTJ</h4>
+            <p>
+
+            </p>
+break;
+}
+}
+
+}
 
             </div>
         </div>
@@ -216,7 +318,7 @@
                 @Model.FullName
             </h4>
             @if (!Model.isLinkValid)
-            {
+                {
                 <p>Описание профиля</p>
             }
             <ul>

@@ -55,9 +55,9 @@ def get_sequences(tokenizer, x):
     sequences = tokenizer.texts_to_sequences(x)
     return pad_sequences(sequences, maxlen=SENTENCE_LENGTH)
 
-model = load_model(r'C:\Users\Michael\Desktop\grudina\suicide ML\suicide_model2.h5', custom_objects={'precision': precision, 'recall': recall, 'f1': f1})
+model = load_model(r'suicide_model2.h5', custom_objects={'precision': precision, 'recall': recall, 'f1': f1})
 
-with open(r'M:/Grudina/HSE psychotype2/Psychotype_HSE/Util/Scripts/tokenizer.pickle', 'rb') as handle:
+with open(r'tokenizer.pickle', 'rb') as handle:
 	tokenizer = pickle.load(handle)
 
 # Высота матрицы (максимальное количество слов в посте)
@@ -90,17 +90,18 @@ while True :
                         text = preprocess_text(text)
                         text_fin = get_sequences(tokenizer, [text])
                         predicted_test = np.round(model.predict(text_fin))
-                        print('easter egg 1')
+                        #print('easter egg 1')
                         fileTo.write(str((predicted_test[0][0] + 1) % 2))
                         fileTo.write("\n")
                     fileTo.close()
                     fileFrom.close()
-                    print('easter egg 2')
+                    #print('easter egg 2')
                     os.remove(filePathStart)
                 except:
-                    sleep(0.5)
-                    print('easter egg 3')
+                    sleep(0.2)
+                    #print('easter egg 3')
                 #os.rename(filePathCSV, filePathCSV + ".temp")
+
         
 """
     if os.path.isfile(filePathStart) :
