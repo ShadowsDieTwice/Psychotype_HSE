@@ -82,7 +82,7 @@ while True :
                     filePathRes = workingDir + '\\' + id + '.txt'
                     print(filePathStart)
                     fileFrom = io.open(filePathStart, mode="r", encoding="utf-8")
-                    fileTo = open(filePathRes, 'a')
+                    fileTo = open(filePathRes, 'w')
 
                     lines = fileFrom.readlines()
                     print(filePathRes)
