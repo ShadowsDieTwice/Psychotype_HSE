@@ -57,13 +57,13 @@ namespace Psychotype.Models.Components.Tests
             //this test is correct with default suicide_result if he still has only 2 posts
             
             Client cl = new User("durov");
-            string filePath1 = @"../../TestFiles/userPosts.csv";
-            string filePath2 = @"../../TestFiles/suicide_result.txt";
+            string id = cl.Link;
+            string workingDir = AppSettings.WorkingDir;
 
             PythonRunner.RunScript(@"../../../Psychotype_HSE/Util/Scripts/suicideScript.py", AppSettings.PythonPath,
-                filePath2, filePath1);
-
-            double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, filePath1, filePath2);
+                workingDir);//, filePath1); // переписать тест
+                
+            double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, AppSettings.WorkingDir, id);
             //+ Check correctness with your eyes
             Console.WriteLine(res);
             Assert.IsTrue(res < 0.999 && res >= 0.00);            

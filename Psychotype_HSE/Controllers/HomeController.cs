@@ -11,15 +11,15 @@ namespace Psychotype.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index(PageDataModel model)
+        public ActionResult Index(String query)
         {
-            return View(model);
+            return View(new PageDataModel(query));
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public ActionResult MostPopularWords(PageDataModel model)
         {
             return RedirectToAction("Index");
-        }
+        }*/
     }
 }

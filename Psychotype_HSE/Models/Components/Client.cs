@@ -8,6 +8,7 @@ using Psychotype_HSE.Models.Components;
 using Psychotype_HSE.Util;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -108,43 +109,66 @@ namespace Psychotype_HSE.Models.Components
         /// <param name="writeFile"> Path to SuicidePredictCSV </param>
         /// <param name="readFile"> Path to SuicideResult </param>
         /// <returns></returns>
-        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string writeFile, string readFile)
+        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string dir, string id)
+            // string writeFile, string readFile)
         {
             //if (readFile == null)
             //    readFile = AppSettings.SuicideResult;
             //if (writeFile == null)
             //    writeFile = AppSettings.SuicidePredictCSV;
-        
+            string writeFile = dir + "\\" + id + ".csv";
+            string readFile = dir + "\\" + id + ".txt";
+
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            SaveTextsToCSV(timeFrom, timeTo, writeFile + ".temp");
-            File.Delete(writeFile);
-            File.Move(writeFile + ".temp", writeFile);
+            SaveTextsToCSV(timeFrom, timeTo, writeFile);// + ".temp");
+            //File.Delete(writeFile);
+            //File.Move(writeFile + ".temp", writeFile);
 
             List<double> probs = new List<double>();
-            while (!File.Exists(readFile + ".temp")) {}
-
-            File.Move(readFile + ".temp", readFile);
-            using (StreamReader sr = new StreamReader(readFile, System.Text.Encoding.UTF8))
+            
+            // все виснет
+            while (!File.Exists(readFile))
             {
-                string str;
-                while ((str = sr.ReadLine()) != null)
-                {
-                    try
-                    {
-                        probs.Add(double.Parse(str));
-                    }
-                    catch (FormatException)
-                    {
-                        //Because of commas in russian doubles
-                        str = str.Replace(".", ",");
-                        probs.Add(double.Parse(str));
-                    }
+                Thread.Sleep(100);
+            }
 
+            //File.Move(readFile + ".temp", readFile);
+
+            // extra precautions for reading from file in use
+            while (true)
+            {
+                try
+                {
+                    using (StreamReader sr = new StreamReader(readFile, System.Text.Encoding.UTF8))
+                    {
+                        string str;
+                        while ((str = sr.ReadLine()) != null)
+                        {
+                            try
+                            {
+                                probs.Add(double.Parse(str));
+                            }
+                            catch (FormatException)
+                            {
+                                //Because of commas in russian doubles
+                                str = str.Replace(".", ",");
+                                probs.Add(double.Parse(str));
+                            }
+                        }
+                        break;
+                    }
+                }
+                catch (IOException)
+                {
+                    Thread.Sleep(100);
                 }
             }
+
+
+
             File.Delete(readFile);
-            if (probs.Count != posts.Count)
-                throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
+            //if (probs.Count != posts.Count)
+            //    throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
 
             //Finding weighted arithmetic mean
             double result = 0,  

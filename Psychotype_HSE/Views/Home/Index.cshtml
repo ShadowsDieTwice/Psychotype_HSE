@@ -30,51 +30,110 @@
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Template/src/css/index.css")">
 
 
-    </head>
+</head>
 <body>
 
     <div class="logobox">
-        <a class="logo">
+        <span class="logo">
             PHSE'19
-        </a>
+            @if (Model.isLinkValid)
+            {
+                <a href="https://vk.com/@Model.Id">
+                    <div style="float:right; margin-left:15px;">
+                        <img class="image" src="@Model.PhotoURL" />
+                    </div>
+                </a>
+            }
+            else
+            {
+                <div style="float:right; margin-left:15px;">
+                    <img class="image" src="@Model.PhotoURL" />
+                </div>
+            }
+        </span>
     </div>
-    @using (Html.BeginForm("MostPopularWords", "Home", FormMethod.Post))
+    @using (Html.BeginForm("Index", "Home", FormMethod.Get))
     {
         <nav class="searchbar">
-            @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id существующего открытого профиля vk.com", @class = "searchline" })
-            @Html.ValidationMessageFor(m => m.Id)
+            @Html.TextBox("query")
             <button class="searchbutton" type="submit">
                 <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
             </button>
         </nav>
     }
     <div class="data">
-        <div class="contblock" id="Latency">
+        <div class="contblock" id="Type">
             <div class="contdescr">
-                <img src="~/Content/Template/src/img/graph.png" style="position: absolute; margin-left: 15px;" />
+                <img src="~/Content/Template/src/img/robo-logo-black.png" style="
+                                position: absolute;
+            margin-left: 11px;
+            height: 55px;
+            width: 55px;
+            margin-top: -2px;    margin-bottom: 150px;" />
                 <div>
-                    <h3>Частота появления слов</h3>
+                    <h3>Оценка типа аккаунта</h3>
                 </div>
                 <button class="hidebutton" type="submit">
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata" style="display: block;"></div>
-        </div>
+            <div class="contdata" style="display: block;">
+                @if (!Model.isLinkValid)
+                {
+                    <p>Предсказание вероятности того, что профиль является "фейком" или "ботом".</p>
+                    <p>Предсказание наличия суицидальных наклонностей у пользователя по его записям.</p>
+                }
+                @if (Model != null && Model.isLinkValid)
+                {
+                    double prob = Model.BotProbability;
+                    double suic = Model.SuicideProbability;
 
-        <div class="contblock" id="Test">
-            <div class="contdescr">
-                <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
-                <div>
-                    <h3>Типология Майерс-Бриггс</h3>
-                </div>
-                <button class="hidebutton" type="submit">
-                    <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
-                </button>
+                    <h4>
+                        Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
+                    </h4>
+                    if (prob > 0.5)
+                    {
+                        <p>
+                            Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            Скорее всего аккаунт является персональной страницей настоящего человека.
+                        </p>
+                    }
+                    if (Model.HasWords)
+                    {
+                        <h4>
+                            Вероятность наличия суицидальных наклонностей у пользователя: @string.Format("{0:f2}", suic)
+                        </h4>
+
+                        if (suic > 0.2)
+                        {
+                            <p>
+                                Такой уровень показателя может свидетельствовать об опасности для пользователя,
+                                и являться причиной для обращения за квалифицированной помощью.
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                Содержание постов пользователя не выражает суицидальных наклонностей и имеет в целом нейтральный окрас.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <h4>Невозможно предсказать суицидальные наклонности. Нет общедоступных данных.</h4>
+                    }
+                    <p>
+                        Анализ суицидальных наклонностей проводится на основании содержания текстов на странице с использованием технологии глубокого обучения.
+                    </p>
+
+                }
             </div>
-            <div class="contdata" style="display: block;"></div>
         </div>
-
         <div class="contblock" id="Rare">
             <div class="contdescr">
                 <img src="~/Content/Template/src/img/latency.png" style="position: absolute; margin-left: 15px;" />
@@ -86,34 +145,40 @@
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null && PageDataModel.isLinkValid)
+                @if (!Model.isLinkValid)
+                {
+                    <p>Часто употребимые в записях пользователя слова.</p>
+                }
+                @if (Model != null && Model.isLinkValid)
                 {
 
-                    if (PageDataModel.HasWords)
+                    if (Model.HasWords)
                     {
-                        List<Tuple<String, List<String>>> popularWords = PageDataModel.PopularWords.response;
+                        <h4>Самые популярные однокоренные слова в порядке их появления на странице:</h4>
+                        List<Tuple<String, List<String>>> popularWords = Model.PopularWords.response;
                         <ol>
                             @foreach (Tuple<String, List<String>> item in popularWords)
                             {
                                 String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                                 <li>
-                                        <a href="@link">
-                                            @item.Item1
-                                        </a>
-                                            <ul>
-                                                @foreach (String word in item.Item2)
-            {
-                link = PageDataModel.PopularWordsAtributes.dictLink + word;
-                                    <li>
-                                        <a href="@link">
-                                            @word
-                                        </a>
-                                    </li>
-}
-                                            </ul>
+                                    <a href="@link">
+                                        @item.Item1
+                                    </a>
+                                    <ul>
+                                        @foreach (String word in item.Item2)
+                                        {
+                                            link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                                            <li>
+                                                <a href="@link">
+                                                    @word
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
                                 </li>
                             }
                         </ol>
+                        <p>Для всех слов доступна ссылка на словарь.</p>
                     }
                     else
                     {
@@ -122,75 +187,70 @@
                 }
             </div>
         </div>
-        <div class="contblock" id="Type">
+        <div class="contblock" id="Test">
             <div class="contdescr">
-                <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            position: absolute;
-        margin-left: 11px;
-        height: 55px;
-        width: 55px;
-        margin-top: -2px;    margin-bottom: 150px;" />
+                <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
                 <div>
-                    <h3>Оценка типа аккаунта</h3>
+                    <h3>Типология Майерс-Бриггс</h3>
                 </div>
                 <button class="hidebutton" type="submit">
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
             <div class="contdata" style="display: block;">
-                @if (Model != null && PageDataModel.isLinkValid)
+                @if (!Model.isLinkValid)
                 {
-                    double prob = PageDataModel.BotProbability;
-                    <h4>
-                        @if (prob > 0.5)
-                        {
-                            @:Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
-                        }
-                        else
-                        {
-                            @:Скорее всего аккаунт является персональной страницей настоящего человека.
-                        }
-                    </h4>
-                    <p>
-                        Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
-                    </p>
+                    <p>Предсказание результата теста Майерс-Бриггс на основании данных профиля.</p>
                 }
+
             </div>
         </div>
     </div>
     <div class="info">
-        <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
+        <div class="contdescr">
+            <h3 style="margin-left: 35px;">Информация профиля</h3>
+        </div>
+        <div class="contdata">
+
+            <h4>
+                @Model.FullName
+            </h4>
+            @if (!Model.isLinkValid)
+            {
+                <p>Описание профиля</p>
+            }
+            <ul>
+                @foreach (string descr in Model.Description)
+                {
+                    <li>
+                        @descr
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
     <div class="nav">
         <div class="navbuttons">
             <div class="buttongroup">
-                <button class="navbutton" onclick=" window.location.href='#Latency'">
-                    <img src="~/Content/Template/src/img/graph.png" />
-                    <h3>Частоты слов</h3>
+                <button class="navbutton" onclick=" window.location.href='#Rare'">
+                    <img src="~/Content/Template/src/img/latency.png" />
+                    Слова
+                </button>
+                <button class="navbutton" onclick=" window.location.href='#Type'">
+                    <img src="~/Content/Template/src/img/robo-logo-black.png" />
+                    Тип
                 </button>
                 <button class="navbutton" onclick=" window.location.href='#Test'">
                     <img src="~/Content/Template/src/img/test_partial_passed1600.png">
-                    <h3>Типология</h3>
-                </button>
-                <button class="navbutton" onclick=" window.location.href='#Rare'">
-                    <img src="~/Content/Template/src/img/latency.png" />
-                    <h3>Популярные</h3>
-                </button>
-                <button class="navbutton" onclick=" window.location.href='#Type'">
-                    <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            height: 55px;
-                            width: 55px;" />
-                    <h3 style="margin-left: 20px; margin-top: 9px;">Тип</h3>
+                    Тест
                 </button>
                 <button class="navbutton" onclick="document.getElementsByClassName('searchline')[0].focus()">
                     <img src="~/Content/Template/src/img/palm-scan.png" />
-                    <h3>Поиск</h3>
+                    Поиск
                 </button>
-            </div>
-            <div class="image">
             </div>
         </div>
     </div>
 </body>
-    <script src="~/Content/Template/src/js/script.js"></script>
+<script src="~/Content/Template/src/js/script.js"></script>
 </html>
