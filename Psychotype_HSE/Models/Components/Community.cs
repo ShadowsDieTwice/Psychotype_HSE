@@ -63,7 +63,11 @@ namespace Psychotype_HSE.Models.Components
                     OwnerId = usr.Id
                 });
             }
-            catch (CannotBlacklistYourselfException ex)
+            catch (UserDeletedOrBannedException)
+            {
+                return;
+            }
+            catch (CannotBlacklistYourselfException)
             {
                 return;
             }
@@ -81,32 +85,33 @@ namespace Psychotype_HSE.Models.Components
             swWrite(sw, (usr.Connections.Skype != null ? 1 : 0).ToString());
 
            // var counters = Api.Get().Account.GetCounters(CountersFilter.All);
-            swWrite(sw, usr.Counters.Friends?.ToString());
-            swWrite(sw, usr.Counters.Followers?.ToString());
-            swWrite(sw, usr.Counters.Groups?.ToString());
-            swWrite(sw, usr.Counters.Pages?.ToString());
+            swWrite(sw, usr.Counters.Friends);
+            swWrite(sw, usr.Counters.Followers);
+            swWrite(sw, usr.Counters.Groups);
+            swWrite(sw, usr.Counters.Pages);
 
-            swWrite(sw, usr.Counters.Subscriptions?.ToString());
-            swWrite(sw, usr.Counters.Photos?.ToString());
-            swWrite(sw, usr.Counters.UserPhotos?.ToString());
-            swWrite(sw, usr.Counters.Audios?.ToString());
-            swWrite(sw, usr.Counters.Videos?.ToString());
+            swWrite(sw, usr.Counters.Subscriptions);
+            swWrite(sw, usr.Counters.Photos);
+            swWrite(sw, usr.Counters.UserPhotos?.ToString() ?? null);
+            swWrite(sw, usr.Counters.Audios?.ToString() ?? null);
+            swWrite(sw, usr.Counters.Videos?.ToString() ?? null);
             //swWrite(sw, id.Counters.Albums.ToString());
 
             //id
             Regex linkMask = new Regex("id_?[0-9]+");
-            swWrite(sw, (linkMask.IsMatch(usr.Domain) ? 1 : 0).ToString());
+            swWrite(sw, linkMask.IsMatch(usr.Domain) ? 1 : 0);
 
             var id = usr.Id;
             //WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
             //{
             //    OwnerId = id
             //});
+
+            //int friends = Api.Get().Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
+            //{
+            //    UserId = VkId
+            //}).Count;
             var posts = wall.WallPosts;
-            int friends = Api.Get().Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
-            {
-                UserId = VkId
-            }, false).Count;
             int sum = 0;
             foreach (var post in posts)
                 sum += post.Views?.Count ?? 0;
@@ -119,15 +124,12 @@ namespace Psychotype_HSE.Models.Components
             //sw.Write(";");
             //id.FriendLists.Count;
         }
-        void swWrite(StreamWriter sw, string str)
+        void swWrite(StreamWriter sw, object str)
         {
             if(str == null)           
                 sw.Write("null");
             else
                sw.Write(str.ToString());
-
-
-            sw.Write(str.ToString());
             sw.Write(";");
         }
     }
