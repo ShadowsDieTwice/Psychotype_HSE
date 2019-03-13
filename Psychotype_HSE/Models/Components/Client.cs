@@ -53,7 +53,7 @@ namespace Psychotype_HSE.Models.Components
         public virtual List<string> GetTexts(DateTime timeFrom, DateTime timeTo)
         {
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            List<string> texts = new List<string>();    
+            List<string> texts = new List<string>();
             foreach (Post post in posts)
             {
                 texts.Add(post.Text);
@@ -77,7 +77,7 @@ namespace Psychotype_HSE.Models.Components
             {
                 sw.WriteLine(firstLine);
                 foreach (var text in texts)
-                    sw.WriteLine(text.Replace("\n"," "));
+                    sw.WriteLine(text.Replace("\n", " "));
             }
         }
 
@@ -95,6 +95,12 @@ namespace Psychotype_HSE.Models.Components
 
             foreach (Post post in wall.WallPosts)
             {
+                var innerPosts = post.CopyHistory;
+                foreach (var innerPost in innerPosts)
+                {
+                    if (innerPost.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                        curPosts.Add(innerPost);
+                }
                 if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
                     curPosts.Add(post);
             }
@@ -122,11 +128,11 @@ namespace Psychotype_HSE.Models.Components
                     if (word.Length > 2) //чтобы убрать всякие предлоги и тд
                     {
                         string key = RussianStemmer.GetTheBase(word);
-	                    if (!popularWords.ContainsKey(key))
-							popularWords.Add(key, new List<string>());
+                        if (!popularWords.ContainsKey(key))
+                            popularWords.Add(key, new List<string>());
 
-	                    popularWords[key].Add(word);
-					}
+                        popularWords[key].Add(word);
+                    }
                 }
             }
 
