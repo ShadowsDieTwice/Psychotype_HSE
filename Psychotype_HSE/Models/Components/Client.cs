@@ -9,6 +9,10 @@ using Psychotype_HSE.Util;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Text;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -64,23 +68,6 @@ namespace Psychotype_HSE.Models.Components
         }
 
         /// <summary>
-        /// Writes all texts to csv file with header "text"
-        /// </summary>     
-        public virtual void SaveTextsToCSV(DateTime timeFrom, DateTime timeTo, string filePath = null) //AppSettings.SuicidePredictCSV)
-        {
-            if (filePath == null)
-                filePath = AppSettings.UserPosts;
-
-            List<string> texts = GetTexts(timeFrom, timeTo);
-            //Fully overwrites file 
-            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
-            {
-                foreach (var text in texts)
-                    sw.WriteLine(text.Replace("\n"," "));
-            }
-        }
-
-        /// <summary>
         /// This methods gets all posts from clients wall
         /// </summary>
         /// <returns> WallObject instance </returns>
@@ -110,67 +97,61 @@ namespace Psychotype_HSE.Models.Components
         /// <param name="readFile"> Path to SuicideResult </param>
         /// <returns></returns>
         public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string dir, string id)
-            // string writeFile, string readFile)
         {
-            //if (readFile == null)
-            //    readFile = AppSettings.SuicideResult;
-            //if (writeFile == null)
-            //    writeFile = AppSettings.SuicidePredictCSV;
-            string writeFile = dir + "\\" + id + ".csv";
-            string readFile = dir + "\\" + id + ".txt";
-
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            SaveTextsToCSV(timeFrom, timeTo, writeFile);// + ".temp");
-            //File.Delete(writeFile);
-            //File.Move(writeFile + ".temp", writeFile);
 
-            List<double> probs = new List<double>();
-            
-            // все виснет
-            while (!File.Exists(readFile))
+            // подготавливаем сообщение
+            List<string> texts = GetTexts(timeFrom, timeTo);
+            String request = ""; 
+            foreach (var text in texts)
+                request += text.Replace("\n", " ") + "\n";
+
+            // устанавливаем соединение
+            int clientPort = 1111;
+            IPAddress localIP = null;
+
+            // поместить в настройки
+            foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
             {
-                Thread.Sleep(100);
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIP = ip;
+                    break;
+                }
             }
 
-            //File.Move(readFile + ".temp", readFile);
+            // подключение
+            IPEndPoint ipe = new IPEndPoint(localIP, clientPort);
+            Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(ipe);
 
-            // extra precautions for reading from file in use
-            while (true)
+            // передаем в данные
+            request = request.Remove(request.Length - 1);
+            Byte[] bytesSent = Encoding.UTF8.GetBytes(request);
+            Byte[] bytesReceived = new Byte[256];
+            string responce = "";
+            socket.Send(bytesSent, bytesSent.Length, 0);
+
+            // получаем результат
+            int bytes = socket.Receive(bytesReceived, bytesReceived.Length, 0);
+            responce = Encoding.UTF8.GetString(bytesReceived, 0, bytes);
+            List<double> probs = new List<double>();
+            
+            foreach (string prob in responce.Split('\n'))
             {
                 try
                 {
-                    using (StreamReader sr = new StreamReader(readFile, System.Text.Encoding.UTF8))
-                    {
-                        string str;
-                        while ((str = sr.ReadLine()) != null)
-                        {
-                            try
-                            {
-                                probs.Add(double.Parse(str));
-                            }
-                            catch (FormatException)
-                            {
-                                //Because of commas in russian doubles
-                                str = str.Replace(".", ",");
-                                probs.Add(double.Parse(str));
-                            }
-                        }
-                        break;
-                    }
+                    probs.Add(double.Parse(prob));
                 }
-                catch (IOException)
+                catch (FormatException)
                 {
-                    Thread.Sleep(100);
+                    //Because of commas in russian doubles
+                    String str = prob.Replace(".", ",");
+                    if (str != "") probs.Add(double.Parse(str));
+                    //else probs.Add(0);
                 }
             }
 
-
-
-            File.Delete(readFile);
-            //if (probs.Count != posts.Count)
-            //    throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
-
-            //Finding weighted arithmetic mean
             double result = 0,  
                 normalizer = 0, //Sum of weights
                 w;
