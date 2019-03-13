@@ -9,23 +9,39 @@
                                   supported by Chrome and Opera */
 }
 
+h4, p {
+    font-family: Andika, Arial, Tahoma;
+    font-color: black;
+    margin-top: 15px;
+    margin-right: 30px;
+    margin-left: 30px;
+    margin-bottom: 0px;
+}
+
+h4 {
+    font-size: 22px;
+}
+
+p {
+    font-size: 18px;
+}
+
 div{
  	display: inline-block;
  	margin: 0;
     padding: 0;
  }
 
- html, body
-{
+html, body {
     height: 98%;
     margin: 0;
     padding: 0;
-    font-family: Andika;
+    font-family: Andika, Arial, Tahoma;
 }
 
 body
 {
-	grid-template-columns: auto 340px 850px 340px auto;
+	grid-template-columns: auto 300px 700px 300px auto;
   	grid-template-rows: 100px auto;
   	display: grid;
 }
@@ -43,16 +59,6 @@ img
   	grid-column-end: 3;
 }
 
-.logo
-{
-	float: right;
- 	font-family: Molot;
-  	font-size: 36px;
-  	color: #2e3441;
-
-  	margin-top: 15px;
-  	margin-right: 30px;
-}
 
  .searchbar
  {
@@ -86,14 +92,13 @@ button
 }
 
 input {
-  width: 100%;
-  margin: 0;
-  padding: 12px 20px;
-
-  font: 18px Andika,arial,sans-serif;
-  line-height: 26px;
-
-  outline: none;
+    width: 100%;
+    margin: 0;
+    padding: 12px 20px;
+    font: 18px Andika, Arial, Tahoma;
+    line-height: 26px;
+    outline: none;
+    height: 17px;
 }
 
 input:focus{
@@ -145,60 +150,47 @@ input:focus{
 	text-align: left;
 }
 
-h1,h2,h3,h4
+h1,h2,h3
 {
 	color: white;
  	font-family: BeerMoney;
-  	font-size: 30px;
+  	font-size: 26px;
   	margin: 0px;
   	vertical-align: center;
   	margin-left: 80px;
 }
 
-.info
-{
-	grid-row-start: 2;
-  	grid-column-start: 4;
-  	grid-column-end: 5;
-  	width:auto;
-  	height: 300px;
-  	background-color: #fff8f8;
-  	border: 1px solid #2e3441;
-  	margin-left: 10px;
+.info {
+    grid-row-start: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    width: auto;
+    height: 0;
+    background-color: #fff8f8;
+    margin-right: 10px;
 }
 
-.nav
-{
-	display: flex;
-	position:fixed;
-	background-color: #fff8f8;
-	border-top: 1px solid grey;
+    .info > .contdata {
+        border: 1px solid #2e3441;
+    }
 
-	opacity: 1;
-	bottom: 0px;
-	height: 80px;
-	width: 100%;
+.nav {
+    text-align: center;
+    position: fixed;
+    background-color: #fff8f8;
+    border-top: 1px solid grey;
+    opacity: 1;
+    bottom: 0px;
+    height: 55px;
+    width: 100%;
 }
 
-.image
-{
-	height: 340px;
-	width: 340px ;
-	right: 380px;
-	top: -370px;
 
-	background-color: #fff8f8;
-	border: 1px solid #2e3441;
-
-	position: relative;
-  	bottom: 210px;
-  	z-index: 100;
-}
-
-.navbuttons
-{
-	margin: auto;
-	width: auto;
+.navbuttons {
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+    width: auto;
 }
 
 .searchbutton
@@ -224,52 +216,39 @@ h1,h2,h3,h4
     cursor: pointer;
 }
 
-.navbutton
-{
-	width: 180px;
-	border: none;
-	height: 87px;
-	background-color: #2e3441;
-	border: 1px solid #fff8f8;
-	margin: 0px;
-	padding: 0px;
-
-	position: relative;
-  	left: 0px;
+.navbutton {
+    width: 200px;
+    border: none;
+    height: 65px;
+    background-color: #2e3441;
+    border: 1px solid #fff8f8;
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    left: 0px;
+    color: white;
+    font-family: BeerMoney;
+    font-size: 22px;
 }
 .navbutton:active
 {
-	width: 180px;
-	height: 84px;
+	height: 63px;
 }
 
-.navbutton img
-{
-	height: 40px;
-	width: 40px;
-	position: relative;
-	float: left;
-	margin-left: 12px;
-}
-.navbutton h3
-{
-	float: left;
-	color: white;
- 	font-family: BeerMoney;
-  	font-size: 21px;
-  	line-height: 36px;
-  	margin: 0px;
-  	margin-left: 11px;
-}
+    .navbutton img {
+        height: 40px;
+        width: 40px;
+        position: absolute;
+        left: 21px;
+        top: 10px;
+    }
 
-.buttongroup
-{
-	margin-top: -5px;
-	width: 900px;
-	height: 80px;
-	background-color: none;
-	display: table;
-
+.buttongroup {
+    margin-top: -5px;
+    width: auto;
+    height: 80px;
+    display: table;
+    border: none;
 }
 
 .buttongroup:after {
@@ -280,10 +259,6 @@ h1,h2,h3,h4
 
 .buttongroup button:not(:last-child) {
   border-right: none; /* Prevent double borders */
-}
-
-.buttongroup button:hover {
-  background-color: #354567;
 }
 
 
@@ -324,13 +299,58 @@ h1,h2,h3,h4
 
 /* Style the collapsible content. Note: hidden by default */
 .contdata {
+    min-height: 120px;
+    width: auto;
+    display: block;
+    padding: 1px;
+    overflow: hidden;
+    background-color: #f1f1f1;
+    transition: max-height 0.2s ease-out;
+    padding-bottom: 30px;
+}
 
-	min-height: 400px;
-	width: auto;
+ol {
+    margin: 10px;
+    margin-top: 20px;
+    margin-left: 20px;
+    font-family: Andika, Arial, Tahoma;
+    font-size: 18px;
+}
 
-  padding: 1px;
-  display: none;
-  overflow: hidden;
-  background-color: #f1f1f1;
-  transition: max-height 0.2s ease-out;
+a:link {
+    color: #2e3441;
+}
+
+
+a:visited {
+    color: black;
+}
+
+
+a:hover, a:active {
+    color: #354567;
+    font-weight: bold;
+}
+
+span.logo {
+    float: right;
+    line-height: 58px;
+    font-family: Molot;
+    font-size: 40px;
+    color: #2e3441;
+    margin-top: 8px;
+    padding-top: 0px;
+    margin-right: 30px;
+}
+
+.image {
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    background-color: #fff8f8;
+    border: 1px solid #2e3441;
+    position: relative;
+    z-index: 100;
+    padding: 1px;
+    margin: 5px;
 }

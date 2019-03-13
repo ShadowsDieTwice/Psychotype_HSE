@@ -24,17 +24,29 @@ namespace Psychotype_HSE.Models
         /// </summary>
         public static string PythonPath { get; set; }
         /// <summary>
-        /// Path to suicide_predict.csv (data for suicide_predict.py)
+        /// Path to suicide_predict.csv (data for suicideScript.py)
         /// </summary>
-        public static string SuicidePredictCSV { get; set; }
+        public static string UserPosts { get; set; }
+        /// <summary>
+        /// Result of suicide prediction by python script
+        /// </summary>
+        public static string SuicideResult { get; set; }
+        /// <summary>
+        /// Directory where python script searches for text input (id.csv)
+        /// and leaves probobilities (id.txt).
+        /// </summary>
+        public static string WorkingDir { get; set; }
 
-    static AppSettings()
-        { 
+        static AppSettings()
+        {
             ApplicationId = 6752080;
-            AccessToken = "INPUT_YOUR_TOKEN";
-            PythonPath = "INPUT_YOUR_PATH";
-            PythonScriptPath = "INPUT_YOUR_PATH";
-            SuicidePredictCSV = @"../../Files/suicide_predict.csv";
+            AccessToken = "2a18554c466cb7c9a500d148c77ff3ac864d07dcb05f08167990fddbe502bd458443d19e01a2edaa769a0";
+            PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
+            PythonScriptPath = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\suicideScript.py";
+            //PythonPsychotypeScriptPath = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Util/Scripts/psychotypeScript.py";
+            //UserPosts = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/userPosts.csv";
+            //SuicideResult = @"M:/Grudina/HSE psychotype2/Psychotype_HSE/Files/suicide_result.txt";
+            WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Files\";
         }
     }
 }

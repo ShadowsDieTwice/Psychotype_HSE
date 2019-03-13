@@ -30,54 +30,110 @@
     <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Template/src/css/index.css")">
 
 
-    </head>
+</head>
 <body>
 
     <div class="logobox">
-        <a class="logo">PHSE'19 @{if (Model != null) {@Model.Id }} </a>
+        <span class="logo">
+            PHSE'19
+            @if (Model.isLinkValid)
+            {
+                <a href="https://vk.com/@Model.Id">
+                    <div style="float:right; margin-left:15px;">
+                        <img class="image" src="@Model.PhotoURL" />
+                    </div>
+                </a>
+            }
+            else
+            {
+                <div style="float:right; margin-left:15px;">
+                    <img class="image" src="@Model.PhotoURL" />
+                </div>
+            }
+        </span>
     </div>
-    @using (Html.BeginForm("MostPopularWords", "Home", FormMethod.Post))
+    @using (Html.BeginForm("Index", "Home", FormMethod.Get))
     {
-
-    <nav class="searchbar">
-
-        @Html.TextBoxFor(m => m.Id, new { style = "padding: 0px", name = "id", placeholder = "Введите id...", @class = "searchline" })
-        @Html.ValidationMessageFor(m => m.Id)
-        <!--input class="searchline" name="id" type="search" placeholder="Введите id..." aria-label="Search"-->
-
-        <button class="searchbutton" type="submit">
-            <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
-        </button>
-
-    </nav>
+        <nav class="searchbar">
+            @Html.TextBox("query")
+            <button class="searchbutton" type="submit">
+                <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
+            </button>
+        </nav>
     }
     <div class="data">
-        <div class="contblock" id="Latency">
+        <div class="contblock" id="Type">
             <div class="contdescr">
-                <img src="~/Content/Template/src/img/graph.png" style="position: absolute; margin-left: 15px;" />
+                <img src="~/Content/Template/src/img/robo-logo-black.png" style="
+                                position: absolute;
+            margin-left: 11px;
+            height: 55px;
+            width: 55px;
+            margin-top: -2px;    margin-bottom: 150px;" />
                 <div>
-                    <h3>Частота появления слов</h3>
+                    <h3>Оценка типа аккаунта</h3>
                 </div>
                 <button class="hidebutton" type="submit">
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
-        </div>
+            <div class="contdata" style="display: block;">
+                @if (!Model.isLinkValid)
+                {
+                    <p>Предсказание вероятности того, что профиль является "фейком" или "ботом".</p>
+                    <p>Предсказание наличия суицидальных наклонностей у пользователя по его записям.</p>
+                }
+                @if (Model != null && Model.isLinkValid)
+                {
+                    double prob = Model.BotProbability;
+                    double suic = Model.SuicideProbability;
 
-        <div class="contblock" id="Test">
-            <div class="contdescr">
-                <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
-                <div>
-                    <h3>Типология Майерс-Бриггс</h3>
-                </div>
-                <button class="hidebutton" type="submit">
-                    <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
-                </button>
+                    <h4>
+                        Вероятность того, что эта страница - бот: @string.Format("{0:f2}", prob);
+                    </h4>
+                    if (prob > 0.5)
+                    {
+                        <p>
+                            Аккаунт не является персональной страницей настоящего человека с высокой вероятностью.
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            Скорее всего аккаунт является персональной страницей настоящего человека.
+                        </p>
+                    }
+                    if (Model.HasWords)
+                    {
+                        <h4>
+                            Вероятность наличия суицидальных наклонностей у пользователя: @string.Format("{0:f2}", suic)
+                        </h4>
+
+                        if (suic > 0.2)
+                        {
+                            <p>
+                                Такой уровень показателя может свидетельствовать об опасности для пользователя,
+                                и являться причиной для обращения за квалифицированной помощью.
+                            </p>
+                        }
+                        else
+                        {
+                            <p>
+                                Содержание постов пользователя не выражает суицидальных наклонностей и имеет в целом нейтральный окрас.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <h4>Невозможно предсказать суицидальные наклонности. Нет общедоступных данных.</h4>
+                    }
+                    <p>
+                        Анализ суицидальных наклонностей проводится на основании содержания текстов на странице с использованием технологии глубокого обучения.
+                    </p>
+
+                }
             </div>
-            <div class="contdata"></div>
         </div>
-
         <div class="contblock" id="Rare">
             <div class="contdescr">
                 <img src="~/Content/Template/src/img/latency.png" style="position: absolute; margin-left: 15px;" />
@@ -88,93 +144,215 @@
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata">
-                @if (Model != null)
+            <div class="contdata" style="display: block;">
+                @if (!Model.isLinkValid)
                 {
-                <ol>
-                    @foreach (Tuple<String, List<String>> item in Model.PopularWords.response)
+                    <p>Часто употребимые в записях пользователя слова.</p>
+                }
+                @if (Model != null && Model.isLinkValid)
+                {
+
+                    if (Model.HasWords)
                     {
-                    <li>
-                        <p>@item.Item1</p>
-                        <div>
-                            <ul>
-                                @foreach (String word in item.Item2)
-                                {
-                                String link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                        <h4>Самые популярные однокоренные слова в порядке их появления на странице:</h4>
+                        List<Tuple<String, List<String>>> popularWords = Model.PopularWords.response;
+                        <ol>
+                            @foreach (Tuple<String, List<String>> item in popularWords)
+                            {
+                                String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                                 <li>
                                     <a href="@link">
-                                        @word
+                                        @item.Item1
                                     </a>
+                                    <ul>
+                                        @foreach (String word in item.Item2)
+                                        {
+                                            link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                                            <li>
+                                                <a href="@link">
+                                                    @word
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
                                 </li>
-                                }
-                            </ul>
-                        </div>
-                    </li>
+                            }
+                        </ol>
+                        <p>Для всех слов доступна ссылка на словарь.</p>
                     }
-                </ol>
+                    else
+                    {
+                        <h4> На странице нет постов за последний месяц, видимых всем пользователями, содержащих слова. </h4>
+                    }
                 }
             </div>
         </div>
-
-        <div class="contblock" id="Type">
+        <div class="contblock" id="Test">
             <div class="contdescr">
-                <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            position: absolute;
-        margin-left: 11px;
-        height: 55px;
-        width: 55px;
-        margin-top: -2px;    margin-bottom: 150px;" />
+                <img src="~/Content/Template/src/img/test_partial_passed1600.png" style="position: absolute; margin-left: 15px;" />
                 <div>
-                    <h3>Оценка типа аккаунта</h3>
+                    <h3>Типология Майерс-Бриггс</h3>
                 </div>
                 <button class="hidebutton" type="submit">
                     <img src="~/Content/Template/src/img/expand_arrow1600.png" alt="hide-btn" />
                 </button>
             </div>
-            <div class="contdata"></div>
-        </div>
+            <div class="contdata" style="display: block;">
+                @if (!Model.isLinkValid)
+    {
+            <p>Предсказание результата теста Майерс-Бриггс на основании данных профиля.</p>
+}
+else
+{
+if (Model.MayersBriggs == "")
+{
+            <h4>В профиле сокрыты либо отсутствуют группы. Невозможно построить предсказание.</h4>
+}
+else
+{
+switch (Model.MayersBriggs)
+{
+    case "INTJ":
+            <h4>
+                INTJ - Аналитик, провидец, вдохновитель.
+            </h4>
+            <p>
+                Умеет отличать главное от второстепенного, не любит пустых разговоров, склонен к четкому практичному мышлению. В работе этот тип любит использовать необычные идеи, при этом демонстрируя свою независимость. Использует интуицию там, где не знает точных ответов. Не любит шумных компаний, ощущает трудности в налаживании отношений с другими людьми.
+            </p>
+break;
+case "INTP":
+            <h4>INTP - Архитектор, критик, аналитик.</h4>
+            <p>
+                Этот тип – эрудит с философским складом ума. Осторожен, принимает решение только с уверенностью в его правильности, анализируя прошлое в его связи с будущим.  Не любит бурных проявлений эмоций, ценит уют и комфорт.
+            </p>
+break;
+case "ISFP":
+            <h4>ISFP - Придумщик, композитор.</h4>
+            <p>
+                Умеет наслаждаться обычной жизнью, спокойно перенося однообразие и рутину. Легко уживается с людьми, уважая их личное пространство, при этом требуя от них такого же отношения. Любит шутить, развлекать, избегает конфликтных ситуаций. Часто является  помощником, любит ощущать себя нужным и значимым в глазах других людей.
+            </p>
+break;
+case "ISFJ":
+            <h4>ISFJ - Исполнитель, хранитель, защитник.</h4>
+            <p>
+                Распознает наигранность и фальшь в отношениях,  делит людей на своих – чужих, руководя психологической дистанцией. Отстаивает свои взгляды и принципы. Умеет постоять за себя и своих близких, не переносит морального превосходства других людей.  Умеет глубоко анализировать себя и других.
+            </p>
+break;
+case "ISTP":
+            <h4>ISTP</h4>
+            <p>
 
+            </p>
+break;
+case "ISTJ":
+            <h4>ISTJ - Мастер, умелец.</h4>
+            <p>
+                Ощущения являются для него главным источником познания мира. Проявляет эмпатию, тонко чувствует и любит других людей, отвергает искусственность и фальшь. Отличается техническим складом ума, любит работать руками, при этом всегда укладываясь в нужные сроки.
+            </p>
+break;
+case "ENTJ":
+            <h4>
+                ENTJ - Командир, предприниматель.
+            </h4>
+            <p>
+                Способен четко выделять собственные возможности и способности, легко вдохновляется и начинает новые дела, увлекается динамичными видами спорта, которые дарят экстремальные ощущения.  Чувствует новые тенденции, идет на риск, полагаясь на интуицию. С уверенностью использует в работе новые технологии, глубоко анализирует себя и окружающий мир. Склонен к позитивному мышлению и близкому общению с людьми.
+            </p>
+break;
+case "ENTP":
+            <h4>ENTP - Изобретатель, искатель, мечтатель.</h4>
+            <p>
+                Отличается широким кругом интересов, умеет приспосабливаться к новым условиям и легко переходит к новым методам работы.  Является генератором идей, не любит традиции и рутину. Умеет объяснять сложные идеи, будучи в них первопроходцем. В большей мере склонен к синтезу в мышлении, создает новую идею из готовых составляющих.
+            </p>
+break;
+case "ENFP":
+            <h4>ENFP - Непоседа, маршал, реалист.</h4>
+            <p>
+                Склонен применять физическую силу с целью достигнуть победы любой ценой. Препятствия только усиливают его желание выиграть. Любит руководить, не вынося подчинения.  Анализируя ситуацию, любит составлять конкретный план действий, четко ему следует.
+            </p>
+break;
+case "ENFJ":
+            <h4>ENFJ - Увещеватель, наставник.</h4>
+            <p>
+                Очень эмоциональная личность, склонен к эмпатии и проявлению широкого спектра эмоций. Обладает выразительной мимикой и красноречием. Способен предчувствовать разные события и готовиться к ним заранее. Улавливает несоответствия в словах и эмоциях других людей. Часто не уверен в любви партнера, склонен к ревности.
+            </p>
+break;
+case "ESFP":
+            <h4>ESFP - Аниматор, политик, деятель.</h4>
+            <p>
+                Способен видеть возможности других, используя эти знания с целью манипуляции. Руководит более слабыми, четко определяя их слабые места. Любит держать дистанцию, в общении скорее руководствуется собственными интересами. В глазах других пытается выглядеть незаурядной  оригинальной личностью, но часто таким не является.
+            </p>
+break;
+case "ESFJ":
+            <h4>ESFJ - Учитель, воспитатель, энтузиаст.</h4>
+            <p>
+                Способен влиять на людей с помощью эмоционального давления, при этом хорошо ладит с ними, может поднять настроение, склонен жертвовать собственными интересами ради другого человека и проявлять любовь и заботу о близких. В работе всего добивается самостоятельно, любит, когда другие люди подчеркивают его достоинства.
+            </p>
+break;
+case "ESTP":
+            <h4>ESTP - Непоседа, маршал, реалист.</h4>
+            <p>
+                Склонен применять физическую силу с целью достигнуть победы любой ценой. Препятствия только усиливают его желание выиграть. Любит руководить, не вынося подчинения.  Анализируя ситуацию, любит составлять конкретный план действий, четко ему следует.
+            </p>
+break;
+case "ESTJ":
+            <h4>ESTJ - Реалист, администратор, руководитель.</h4>
+            <p>
+                Очень работоспособный, социально-адаптированный тип, всегда чувствует необходимость доводить начатое дело до завершения. Планирует деятельность, практически относиться к окружающим вещам. Склонен проявлять любовь и заботу о близких, любит шумные веселья, компании. Добродушен, но резковат, может быть вспыльчивым и упертым.
+            </p>
+break;
+}
+}
+
+}
+
+            </div>
+        </div>
     </div>
     <div class="info">
-        <div class="contdescr"><h3 style="margin-left: 35px;">Информация профиля</h3></div>
+        <div class="contdescr">
+            <h3 style="margin-left: 35px;">Информация профиля</h3>
+        </div>
+        <div class="contdata">
+
+            <h4>
+                @Model.FullName
+            </h4>
+            @if (!Model.isLinkValid)
+                {
+                <p>Описание профиля</p>
+            }
+            <ul>
+                @foreach (string descr in Model.Description)
+                {
+                    <li>
+                        @descr
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
-
-
     <div class="nav">
         <div class="navbuttons">
             <div class="buttongroup">
-                <button class="navbutton" onclick=" window.location.href='#Latency'">
-                    <img src="~/Content/Template/src/img/graph.png" />
-                    <h3>Частоты слов</h3>
-                </button>
-
-                <button class="navbutton" onclick=" window.location.href='#Test'">
-                    <img src="~/Content/Template/src/img/test_partial_passed1600.png">
-                    <h3>Типология</h3>
-                </button>
                 <button class="navbutton" onclick=" window.location.href='#Rare'">
                     <img src="~/Content/Template/src/img/latency.png" />
-                    <h3>Популярные</h3>
+                    Слова
                 </button>
                 <button class="navbutton" onclick=" window.location.href='#Type'">
-                    <img src="~/Content/Template/src/img/robo-logo-black.png" style="
-                            height: 55px;
-                            width: 55px;" />
-                    <h3 style="margin-left: 20px; margin-top: 9px;">Тип</h3>
+                    <img src="~/Content/Template/src/img/robo-logo-black.png" />
+                    Тип
+                </button>
+                <button class="navbutton" onclick=" window.location.href='#Test'">
+                    <img src="~/Content/Template/src/img/test_partial_passed1600.png">
+                    Тест
                 </button>
                 <button class="navbutton" onclick="document.getElementsByClassName('searchline')[0].focus()">
                     <img src="~/Content/Template/src/img/palm-scan.png" />
-                    <h3>Поиск</h3>
+                    Поиск
                 </button>
-            </div>
-            <div class="image">
-
             </div>
         </div>
     </div>
-
-
 </body>
-
-    <script src="~/Content/Template/src/js/script.js"></script>
+<script src="~/Content/Template/src/js/script.js"></script>
 </html>

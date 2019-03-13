@@ -179,6 +179,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AppSettings.cs" />
+    <Compile Include="Models\ButtonDataModel.cs" />
     <Compile Include="Models\Components\Client.cs" />
     <Compile Include="Models\Components\Community.cs" />
     <Compile Include="Models\Components\RussianStemmer.cs" />
@@ -237,6 +238,7 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Util\Scripts\suicideScript.py" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -249,6 +251,8 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Util\Scripts\suicide_model2.h5" />
+    <Content Include="Util\Scripts\tokenizer.pickle" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
