@@ -6,6 +6,7 @@ using System.Text;
 using Psychotype.Models.Components;
 using System.Threading.Tasks;
 using Psychotype_HSE.Models.Components;
+using System.IO;
 
 namespace Psychotype_HSE_Tests.Models.Components
 {
@@ -33,6 +34,16 @@ namespace Psychotype_HSE_Tests.Models.Components
         {
             User user = new User("maxim_rachinskiy");  //Maxim
             Assert.IsTrue(user.IsBot() < 0.5);
+        }
+
+        [TestMethod()]
+        public void TestBot4()
+        {
+            User user = new User("krasnodar_arenda_kvartir");  //Maxim           
+            using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testBot.txt", false, System.Text.Encoding.UTF8))
+            {           
+                sw.WriteLine(user.IsBot());
+            }
         }
     }
 }

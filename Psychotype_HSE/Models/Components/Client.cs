@@ -9,6 +9,7 @@ using Psychotype_HSE.Util;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using VkNet.Model.Attachments;
 
 namespace Psychotype_HSE.Models.Components
 {

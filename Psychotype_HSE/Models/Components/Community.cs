@@ -29,11 +29,12 @@ namespace Psychotype_HSE.Models.Components
 
             using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
             {
+                sw.WriteLine("name;surname;sex;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views");
+                       
                 //sw.WriteLine("жжж");
                 foreach (var usr in users)
                 {
-                    writeUser(sw, usr);
-                                       
+                    writeUser(sw, usr);                                     
                 }
                 //foreach (var text in texts)
                 sw.WriteLine();
@@ -58,26 +59,44 @@ namespace Psychotype_HSE.Models.Components
             WallGetObject wall;
             try
             {
-                wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+
+                wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
                 {
                     OwnerId = usr.Id
                 });
             }
             catch (UserDeletedOrBannedException)
             {
+                //если профиль приватный
                 return;
             }
             catch (CannotBlacklistYourselfException)
             {
+                //если профиль приватный
                 return;
             }
-           
-            
-            //TODO!!            
+            //catch (InvalidCastException)
+            //{
+            //    //???
+            //    return;
+            //}
+            //catch (InvalidParameterException)
+            //{
+            //    //???
+            //    return;
+            //}
+
+
             //Для дебага
             swWrite(sw, usr.FirstName);
             swWrite(sw, usr.LastName);
 
+            //м/ж
+            swWrite(sw, (usr.Sex ==  VkNet.Enums.Sex.Female ? 1 : 0).ToString());
+
+            //есть ава 
+            //swWrite(sw, usr.HasPhoto);
+            swWrite(sw, usr.PhotoId != null ? 1 : 0);
             //есть фб и тд
             swWrite(sw, (usr.Connections.FacebookId != null ? 1 : 0).ToString());
             swWrite(sw, (usr.Connections.Instagram != null ? 1 : 0).ToString());
@@ -110,8 +129,20 @@ namespace Psychotype_HSE.Models.Components
             //int friends = Api.Get().Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
             //{
             //    UserId = VkId
-            //}).Count;
+            //}).Count;          
             var posts = wall.WallPosts;
+            int ownPostsCount = 0;
+            int repostsCount = 0;
+            foreach (var post in posts)
+            {
+                if (post.CopyHistory.Count > 0)
+                    repostsCount++;
+                else
+                    ownPostsCount++;
+            }
+            swWrite(sw, ownPostsCount);
+            swWrite(sw, repostsCount);
+
             int sum = 0;
             foreach (var post in posts)
                 sum += post.Views?.Count ?? 0;
