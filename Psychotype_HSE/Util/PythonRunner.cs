@@ -20,8 +20,8 @@ namespace Psychotype_HSE.Util
             start.CreateNoWindow = false;
             start.RedirectStandardOutput = true;
             start.RedirectStandardError = true;
-
-            using (Process process = Process.Start(start))
+            Process process = Process.Start(start);
+            //using (Process process = Process.Start(start))
             {
                 //using (StreamReader reader = process.StandardOutput)
                 {
