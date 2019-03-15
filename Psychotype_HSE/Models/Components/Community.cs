@@ -17,6 +17,10 @@ namespace Psychotype_HSE.Models.Components
             VkId = GetIdFromLink();
         }
 
+        /// <summary>     
+        /// Writes a sample of subscribers for using it in model for bots
+        /// </summary>
+        /// <param name="filePath">Path to .csv file</param>
         public void GetSubsForBots(string filePath = null)
         {
             if (filePath == null)

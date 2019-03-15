@@ -26,7 +26,7 @@ namespace Psychotype.Models.Components.Tests
             cl = new Community("team");
             Assert.AreEqual(cl.VkId, 22822305);
             cl = new Community("public74284053");
-            Assert.AreEqual(cl.VkId, 74284053);           
+            Assert.AreEqual(cl.VkId, 74284053);
         }
 
         [TestMethod()]
@@ -82,7 +82,14 @@ namespace Psychotype.Models.Components.Tests
 
             var mostPopularWords = user.GetMostPopularWordsOnWall(DateTime.MinValue, DateTime.MaxValue);
 
-            Assert.IsTrue(mostPopularWords[0].Contains("тест"));
+            using (StreamWriter sw = new StreamWriter(@"..\..\testTop.txt", false, System.Text.Encoding.UTF8))
+            {
+                sw.WriteLine(user.VkId);
+                foreach (var word in mostPopularWords)
+                {
+                    sw.WriteLine(word[0]);
+                }
+            }
         }
 
         [TestMethod()]

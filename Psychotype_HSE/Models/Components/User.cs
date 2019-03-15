@@ -106,10 +106,10 @@ namespace Psychotype_HSE.Models.Components
             return 1 / (1 + Math.Exp(-x));            
         }
 
-        /// <summary>
-        /// Метод для получения выборки из дузей для обучения модели по определению ботов
+        /// <summary>     
+        /// Writes a sample of friends for using it in model for bots
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">Path to .csv file</param>
         public void GetFriendsForBots(string filePath = null)
         {
             if (filePath == null)
