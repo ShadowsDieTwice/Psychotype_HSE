@@ -11,46 +11,23 @@ namespace Psychotype_HSE.Models.Components.Tests
     [TestClass()]
     public class CommunityTests
     {
-        //[TestMethod()]
-        //public void CommunityTest()
-        //{
-        //    Assert.Fail();
-        //}
-
        
-        [TestMethod()]
-        public void SubsFromBK()
-        {
-            string link = "bluergh";
-            Community cm = new Community(link);
-            cm.getSubsForBots(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\botSubsBKtest.csv");
-            Assert.IsTrue(true);
-        }
-
         [TestMethod()]
         public void GetSubsFromOurGroup()
         {
             string link = "club179485371";
             Community cm = new Community(link);
-            cm.getSubsForBots(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\botSubs.csv");
+            cm.GetSubsForBots(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\botSubs.csv");
             Assert.IsTrue(true);
         }
 
         [TestMethod()]
-        public void GetSubsFromOurGroup1()
+        public void GetFriendsFromMy()
         {
-            string link = "club179485371";
-            Community cm = new Community(link);
-            cm.getSubsForBots(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\botSubs.csv");
+            string link = "larorr";
+            User cm = new User(link);
+            cm.GetFriendsForBots(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\myFriends.csv");
             Assert.IsTrue(true);
         }
-        //[TestMethod()]
-        //public void GetSubsFromGroup()
-        //{
-        //    string link = "bluergh";
-        //    Community cm = new Community(link);
-        //    cm.getSubsForBots(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\botSubs.csv");
-        //    Assert.IsTrue(true);
-        //}
     }
 }

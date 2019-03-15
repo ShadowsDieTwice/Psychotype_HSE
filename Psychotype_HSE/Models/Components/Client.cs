@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using VkNet.Model.Attachments;
+using VkNet.Exception;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -236,6 +237,110 @@ namespace Psychotype_HSE.Models.Components
 
             var popularKeys = popularWords.OrderByDescending(pair => pair.Value.Count).Select(pair => pair.Value);
             return popularKeys.Take(numberOfWords).ToList();
+        }
+
+        
+        /// <summary>
+        /// Записывает данные о юзере в строку в .csv
+        /// </summary>
+        /// <param name="sw"></param>
+        /// <param name="usr"></param>
+        protected void WriteUser(StreamWriter sw, VkNet.Model.User usr)
+        {        
+            var api = Api.Get();
+            //TODO - тут в конце System.FormatException
+            usr = api.Users.Get(new long[] { usr.Id }, ProfileFields.All)[0];
+
+            //Проверка - закрыта ли страница
+            WallGetObject wall;
+            try
+            {
+
+                wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+                {
+                    OwnerId = usr.Id
+                });
+            }
+            catch (UserDeletedOrBannedException)
+            {
+                //если профиль приватный
+                return;
+            }
+            catch (CannotBlacklistYourselfException)
+            {
+                //если профиль приватный
+                return;
+            }
+            catch (InvalidCastException)
+            {
+                //???
+                return;
+            }
+            catch (InvalidParameterException)
+            {
+                //???
+                return;
+            }
+
+
+            //Для дебага
+            swWrite(sw, usr.FirstName);
+            swWrite(sw, usr.LastName);
+
+            //м/ж
+            swWrite(sw, (usr.Sex == VkNet.Enums.Sex.Female ? 1 : 0).ToString());
+
+            //есть ава 
+            //swWrite(sw, usr.HasPhoto);
+            swWrite(sw, usr.PhotoId != null ? 1 : 0);
+            //есть фб и тд
+            swWrite(sw, (usr.Connections.FacebookId != null ? 1 : 0).ToString());
+            swWrite(sw, (usr.Connections.Instagram != null ? 1 : 0).ToString());
+            swWrite(sw, (usr.Connections.Twitter != null ? 1 : 0).ToString());
+            swWrite(sw, (usr.Connections.Skype != null ? 1 : 0).ToString());
+
+            // var counters = Api.Get().Account.GetCounters(CountersFilter.All);
+            swWrite(sw, usr.Counters.Friends);
+            swWrite(sw, usr.Counters.Followers);
+            swWrite(sw, usr.Counters.Groups);
+            swWrite(sw, usr.Counters.Pages);
+
+            swWrite(sw, usr.Counters.Subscriptions);
+            swWrite(sw, usr.Counters.Photos);
+            swWrite(sw, usr.Counters.UserPhotos?.ToString() ?? null);
+            swWrite(sw, usr.Counters.Audios?.ToString() ?? null);
+            swWrite(sw, usr.Counters.Videos?.ToString() ?? null);
+            //swWrite(sw, id.Counters.Albums.ToString());
+            Regex linkMask = new Regex("id_?[0-9]+");
+            swWrite(sw, linkMask.IsMatch(usr.Domain) ? 1 : 0);
+
+            var id = usr.Id;              
+            var posts = wall.WallPosts;
+            int ownPostsCount = 0;
+            int repostsCount = 0;
+            foreach (var post in posts)
+            {
+                if (post.CopyHistory.Count > 0)
+                    repostsCount++;
+                else
+                    ownPostsCount++;
+            }
+            swWrite(sw, ownPostsCount);
+            swWrite(sw, repostsCount);
+
+            int sum = 0;
+            foreach (var post in posts)
+                sum += post.Views?.Count ?? 0;
+            swWrite(sw, sum.ToString());
+        
+        }
+        void swWrite(StreamWriter sw, object str)
+        {
+            if (str == null)
+                sw.Write("null");
+            else
+                sw.Write(str.ToString());
+            sw.Write(";");
         }
     }
 }

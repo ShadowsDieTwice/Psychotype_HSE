@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using VkNet.Model;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using VkNet.Model.RequestParams;
+using System.IO;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -55,14 +57,35 @@ namespace Psychotype_HSE.Models.Components
             if (sum / posts.Count < friends / 6)
                 counter += 30;
 
-
-
             //check if the user has a few friends (fake page or bot)
             if (api.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams() { UserId = VkId }, false).Count < 15)
                 counter += 50;
 
             double val = Math.Max(counter / (0.6 * 110), 0);
             return Math.Min(1, val);
+        }
+
+        public void GetFriendsForBots(string filePath = null)
+        {
+            if (filePath == null)
+                filePath = @"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\bots.csv";
+            var api = Api.Get();
+
+            // users = api.Groups.GetMembers(new GroupsGetMembersParams() { GroupId = VkId.ToString(), Fields = UsersFields.All });
+            var users = api.Friends.Get(new FriendsGetParams() { UserId = VkId });
+            //List<string> texts = GetTexts(timeFrom, timeTo);
+            //Fully overwrites file 
+
+            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+            {
+                sw.WriteLine("name;surname;is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views;");
+                foreach (var usr in users)
+                {
+                    WriteUser(sw, usr);
+                }
+                //foreach (var text in texts)
+                sw.WriteLine();
+            }
         }
 
     }
