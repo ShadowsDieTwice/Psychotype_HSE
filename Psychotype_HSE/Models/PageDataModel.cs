@@ -149,20 +149,11 @@ namespace Psychotype_HSE.Models
                 // From this poin we can be sure if link is valid.
                 if (isLinkValid)
                 {
-                    //string curDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";// Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/Files/"; //.GetCurrentDirectory();
-                    //string fileData = AppSettings.WorkingDir + id + ".csv";
-                    //string fileRes = AppSettings.WorkingDir + id + ".txt";
-
-                    //"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Files\"
-
-                    // вызывается отдельно
-                    //Util.PythonRunner.RunScript("C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Util\\Scripts\\suicideScript.py",
-                    //    AppSettings.PythonPath, curDir);//, fileData);
                     var api = Api.Get();
 
                     popularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
 
-                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, AppSettings.WorkingDir, id);
+                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, id);
 
                     VkNet.Model.User vkUser =
                      api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
@@ -178,7 +169,7 @@ namespace Psychotype_HSE.Models
                         fullName = "ФИО недоступно";
                     }
 
-                    photoURL = vkUser.Photo50.AbsoluteUri;// vkUser.PhotoMax.AbsoluteUri;//Photo200.AbsoluteUri;
+                    photoURL = vkUser.Photo50.AbsoluteUri;
 
                     string s = "";
                     int i = 0;
@@ -294,8 +285,6 @@ namespace Psychotype_HSE.Models
         }
 
         Components.User user = new Components.User("");
-
-        //static public Components.User User { get { return user; }  }
 
         public PageDataModel() : this("") { }
         public PageDataModel(string raw_id) { this.Id = raw_id;  }

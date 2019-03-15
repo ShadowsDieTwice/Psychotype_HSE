@@ -55,7 +55,7 @@
     @using (Html.BeginForm("Index", "Home", FormMethod.Get))
     {
         <nav class="searchbar">
-            @Html.TextBox("query")
+            @Html.TextBox("query", null, new { @class = "searchline" })
             <button class="searchbutton" type="submit">
                 <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
             </button>

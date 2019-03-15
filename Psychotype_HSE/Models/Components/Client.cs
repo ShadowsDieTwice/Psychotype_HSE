@@ -103,7 +103,7 @@ namespace Psychotype_HSE.Models.Components
         /// <param name="writeFile"> Path to SuicidePredictCSV </param>
         /// <param name="readFile"> Path to SuicideResult </param>
         /// <returns></returns>
-        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string dir, string id)
+        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string id)
         {
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
 
@@ -112,29 +112,16 @@ namespace Psychotype_HSE.Models.Components
             String request = ""; 
             foreach (var text in texts)
                 request += text.Replace("\n", " ") + "\n";
-
-            // устанавливаем соединение
-            int clientPort = 1111;
-            IPAddress localIP = null;
-
-            // поместить в настройки
-            foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    localIP = ip;
-                    break;
-                }
-            }
-
+            
             // подключение
-            IPEndPoint ipe = new IPEndPoint(localIP, clientPort);
+            IPEndPoint ipe = new IPEndPoint(AppSettings.LocalIP, AppSettings.ClientPort);
             Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
 
             // передаем в данные
             request = request.Remove(request.Length - 1);
-            Byte[] bytesSent = Encoding.UTF8.GetBytes(request);
+            request = $" {request.Length + 1}::" + request;
+            Byte[] bytesSent = Encoding.UTF32.GetBytes(request);
             Byte[] bytesReceived = new Byte[256];
             string responce = "";
             socket.Send(bytesSent, bytesSent.Length, 0);
@@ -168,6 +155,8 @@ namespace Psychotype_HSE.Models.Components
                 result += probs[i] * w;
                 normalizer += w;
             }
+            if (normalizer == 0)
+                return 0;
 
             return result / normalizer;
         }
@@ -178,6 +167,8 @@ namespace Psychotype_HSE.Models.Components
         public virtual double PostWeight(Post post)
         {
             //difference in days
+            if (post.Text == "")
+                return 0;
             TimeSpan span = DateTime.Now - post.Date.Value;
             return 1 / Math.Log(span.TotalDays);
         }

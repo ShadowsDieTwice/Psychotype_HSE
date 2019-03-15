@@ -11,16 +11,18 @@ namespace Psychotype_HSE.Util
 {
     public class PythonRunner
     {
-        public static void RunScript(string scriptPath, string pythonPath, string workingDir)
+        public static void RunScript(string scriptPath, string pythonPath)
         {
             Process process = new System.Diagnostics.Process();
             ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.FileName = pythonPath;
             startInfo.Arguments = scriptPath;
-            startInfo.WorkingDirectory = workingDir;
+            startInfo.WorkingDirectory =AppSettings.WorkingDir +  "Util\\Scripts\\";
             startInfo.ErrorDialog = true;
             process.StartInfo = startInfo;
             process.Start();
+            string s = System.IO.Directory.GetCurrentDirectory();
+            Console.WriteLine();
         }
     }
 }

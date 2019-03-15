@@ -76,9 +76,24 @@ s.bind((socket.gethostname(), SOCKET_NUM))
 s.listen(WAITLIST_SIZE)
 
 def countResponce(clientsocket):
-    request = clientsocket.recv(1024).decode("utf-8")
+    request = clientsocket.recv(1024).decode("utf-32")
     response = ""
+
+    request = request.split("::")
+
+    if (request[0] == "~exit~"):
+        raise Exception("Program interrupted")
+
+    size = int(request[0])
+    request = request[1]
+
+    #print("size: " + str(size) + " - " + str(len(request)))
+    if (len(request) != size):
+        request += clientsocket.recv(4*(size - len(request))).decode("utf-32")
+
+    #print("got it")
     lines = request.split("\n")
+    #print(lines)
 
     for text in lines: 
         text = preprocess_text(text)
@@ -92,6 +107,11 @@ def countResponce(clientsocket):
 
 while True:
 	clientsocket, adress = s.accept()
-	countResponce(clientsocket)
-
+    
+	try:
+		countResponce(clientsocket)
+	except (Exception):
+		print("exit")
+		break
+    
 	print(f"{adress} conneted")
