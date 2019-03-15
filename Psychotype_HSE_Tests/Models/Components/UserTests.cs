@@ -53,5 +53,15 @@ namespace Psychotype_HSE_Tests.Models.Components
             //}
         }
 
+        [TestMethod()]
+        public void MyerBriggs1()
+        {
+            User user = new User("larorr");        
+            using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testMB1.txt", false, System.Text.Encoding.UTF8))
+            {
+                sw.WriteLine(string.Format("{0}", user.GetMyerBriggsType()));
+            }
+        }
+
     }
 }
