@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using VkNet.Model;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using VkNet.Model.RequestParams;
+using System.IO;
+using VkNet.Enums.Filters;
+using VkNet.Exception;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -14,55 +18,118 @@ namespace Psychotype_HSE.Models.Components
             VkId = GetIdFromLink();
         }
 
-        //public bool IsBot { get; set; }
-
         public double IsBot()
         {
-            int counter = 0;
+            //Веса          
+            double[] weights = new double[] { 0.01287878811031696, -0.17811418652058975, 0.003960086137254121, -0.10330501486495451, -0.05201748044966795, 0.41885981578605175, 0.28384792498370426, -0.202368103165068, -0.025202852937152742, -0.018657750323834515, -0.08613977350139986, -0.1095679709182284, -0.22031956029207778, -0.22961615725364692, -0.026667569317484877, -0.00010232676830898997, -0.28941480382232576 };
+            //Свободный член
+            double freePol = 0.178485;
+            double[] x = new double[weights.Length];
             var api = Api.Get();
-
-            //check if the user changed his id-link
-            Regex linkMask = new Regex("id_?[0-9]+");
-            if (linkMask.IsMatch(Link))
-                counter += 10;
-            else
-                counter -= 15;
-
-
-            //check how many group are followed by the user
-            if (api.Groups.Get(new VkNet.Model.RequestParams.GroupsGetParams() { UserId = VkId }, false).Count > 250)
-                counter += 5;
-            if (api.Groups.Get(new VkNet.Model.RequestParams.GroupsGetParams() { UserId = VkId }, false).Count > 500)
-                counter += 10;
-            if (api.Groups.Get(new VkNet.Model.RequestParams.GroupsGetParams() { UserId = VkId }, false).Count > 1000)
-                counter += 10;
-
-            //check the popularity of user's post 
-            WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+            VkNet.Model.User usr = api.Users.Get(new long[] { VkId }, ProfileFields.All)[0];          
+            WallGetObject wall;
+            //Предпологаю, что проверка на закрытость страницы уже пройдена
+            wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
             {
-                OwnerId = VkId
+                OwnerId = usr.Id
             });
+
+            //is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views
+            //0:is_female
+            //1:has_photo
+            //2:friends
+            //3:followers
+            //4:groups
+            //5:pages
+            //6:subscriptions
+            //7:photos
+            //8:user_photo
+            //9:audios
+            //10:videos
+            //11:is_default_link
+            //12:ownPosts
+            //13:reposts
+            //14:views
+            //15:social_networks
+            //16:own / repo
+
+            //м/ж
+            x[0] = usr.Sex == VkNet.Enums.Sex.Female ? 1 : 0;
+            x[1] = usr.PhotoId != null ? 1 : 0;
+            //есть фб и тд
+            x[15] = usr.Connections.FacebookId != null ? 1 : 0 + usr.Connections.Instagram != null ? 1 : 0 + usr.Connections.Twitter != null ? 1 : 0 + usr.Connections.Skype != null ? 1 : 0;
+                    
+            // var counters = Api.Get().Account.GetCounters(CountersFilter.All);
+            x[2] = usr.Counters.Friends ?? 0;
+            x[3] = usr.Counters.Followers ?? 0;
+            x[4] = usr.Counters.Groups ?? 0;
+            x[5] = usr.Counters.Pages ?? 0;
+            x[6] = usr.Counters.Subscriptions ?? 0;
+            x[7] = usr.Counters.Photos ?? 0;
+            x[8] = usr.Counters.UserPhotos ?? 0;
+            x[9] = usr.Counters.Audios ?? 0;
+            x[10] = usr.Counters.Videos ?? 0;
+          
+            Regex linkMask = new Regex("id_?[0-9]+");
+            x[11] = linkMask.IsMatch(usr.Domain) ? 1 : 0;
+
             var posts = wall.WallPosts;
-            int friends = api.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams
+            int ownPostsCount = 0;
+            int repostsCount = 0;
+            foreach (var post in posts)
             {
-                UserId = VkId
-            }, false).Count;
+                if (post.CopyHistory.Count > 0)
+                    repostsCount++;
+                else
+                    ownPostsCount++;
+            }
+            x[12] = ownPostsCount;
+            x[13] = repostsCount;
+
             int sum = 0;
             foreach (var post in posts)
                 sum += post.Views?.Count ?? 0;
-            if (sum / posts.Count < friends / 4)
-                counter += 15;
-            if (sum / posts.Count < friends / 6)
-                counter += 30;
+            x[14] =  sum;
 
+            //19 использовалось как макс. значение при обучении модели
+            x[16] = repostsCount != 0 ? ownPostsCount / repostsCount : 19;
 
+            double res = 0;
+            for (int i = 0; i < x.Length; ++i)
+                res += x[i] * weights[i];
+            res += freePol;
+            return Sigmoid(res);
+        }
 
-            //check if the user has a few friends (fake page or bot)
-            if (api.Friends.Get(new VkNet.Model.RequestParams.FriendsGetParams() { UserId = VkId }, false).Count < 15)
-                counter += 50;
+        double Sigmoid(double x)
+        {
+            return 1 / (1 + Math.Exp(-x));            
+        }
 
-            double val = Math.Max(counter / (0.6 * 110), 0);
-            return Math.Min(1, val);
+        /// <summary>     
+        /// Writes a sample of friends for using it in model for bots
+        /// </summary>
+        /// <param name="filePath">Path to .csv file</param>
+        public void GetFriendsForBots(string filePath = null)
+        {
+            if (filePath == null)
+                filePath = @"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\bots.csv";
+            var api = Api.Get();
+
+            // users = api.Groups.GetMembers(new GroupsGetMembersParams() { GroupId = VkId.ToString(), Fields = UsersFields.All });
+            var users = api.Friends.Get(new FriendsGetParams() { UserId = VkId });
+            //Fully overwrites file 
+
+            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+            {
+                sw.WriteLine("name;surname;is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views;");
+                foreach (var usr in users)
+                {
+                    WriteUser(sw, usr);
+                }
+                //foreach (var text in texts)
+                sw.WriteLine();
+            }
         }
 
     }
