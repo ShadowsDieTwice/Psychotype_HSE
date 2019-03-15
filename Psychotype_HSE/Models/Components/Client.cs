@@ -334,7 +334,7 @@ namespace Psychotype_HSE.Models.Components
             swWrite(sw, sum.ToString());
         
         }
-        void swWrite(StreamWriter sw, object str)
+        protected void swWrite(StreamWriter sw, object str)
         {
             if (str == null)
                 sw.Write("null");

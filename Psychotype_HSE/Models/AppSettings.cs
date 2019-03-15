@@ -40,7 +40,7 @@ namespace Psychotype_HSE.Models
         static AppSettings()
         {
             ApplicationId = 6752080;
-            AccessToken = "685d8d86604d89a5612fa43761c92400818eb18a6074bc1878831f0aed5a062f4a522b3ed1946cdf8db0f";
+            AccessToken = "";
             PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
             PythonScriptPath = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\suicideScript.py";
             
