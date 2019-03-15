@@ -11,7 +11,7 @@ using Psychotype_HSE.Util;
 using Psychotype_HSE.Models;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Threading;
 
 namespace Psychotype.Models.Components.Tests
 {
@@ -50,7 +50,7 @@ namespace Psychotype.Models.Components.Tests
             string id = cl.Link;
             // calling script to process data and make prediction
             PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath);
-            
+            Thread.Sleep(10000);
             //get prediction 
             double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, id);
 
