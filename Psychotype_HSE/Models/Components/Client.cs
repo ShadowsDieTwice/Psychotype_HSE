@@ -74,6 +74,7 @@ namespace Psychotype_HSE.Models.Components
         public virtual List<Post> GetAllPosts(DateTime timeFrom, DateTime timeTo)
         {
             List<Post> curPosts = new List<Post>();
+            Thread.Sleep(300);
             WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
             {
                 OwnerId = VkId
@@ -81,6 +82,12 @@ namespace Psychotype_HSE.Models.Components
 
             foreach (Post post in wall.WallPosts)
             {
+                var innerPosts = post.CopyHistory;
+                foreach (var innerPost in innerPosts)
+                {
+                    if (innerPost.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                        curPosts.Add(innerPost);
+                }
                 if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
                     curPosts.Add(post);
             }

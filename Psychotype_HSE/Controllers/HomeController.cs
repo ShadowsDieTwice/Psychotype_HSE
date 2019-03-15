@@ -15,11 +15,5 @@ namespace Psychotype.Controllers
         {
             return View(new PageDataModel(query));
         }
-
-        /*[HttpPost]
-        public ActionResult MostPopularWords(PageDataModel model)
-        {
-            return RedirectToAction("Index");
-        }*/
     }
 }

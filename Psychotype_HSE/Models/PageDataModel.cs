@@ -262,23 +262,23 @@ namespace Psychotype_HSE.Models
                     //if (vkUser.Counters.Groups.HasValue && vkUser.Counters.Groups.Value != 0)
                     {
                         s = "";
-                        i = id.GetHashCode();
+                        i = (int) user.VkId;
 
-                        if (i / 2 == 0) s += "I";
+                        if (i % 2 == 0) s += "I";
                         else s += "E";
-                        i >>= 2;
+                        i >>= 1;
 
-                        if (i / 2 == 0) s += "S";
+                        if (i % 2 == 0) s += "S";
                         else s += "N";
-                        i >>= 2;
+                        i >>= 1;
 
-                        if (i / 2 == 0) s += "T";
+                        if (i % 2 == 0) s += "T";
                         else s += "F";
-                        i >>= 2;
+                        i >>= 1;
 
-                        if (i / 2 == 0) s += "J";
+                        if (i % 2 == 0) s += "J";
                         else s += "P";
-                        i >>= 2;
+                        i >>= 1;
 
                         mayersBriggs = s;
                     }

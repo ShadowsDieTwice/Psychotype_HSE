@@ -19,8 +19,8 @@ namespace Psychotype_HSE
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath,
-                AppSettings.WorkingDir);//, AppSettings.UserPosts);
+            PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath, AppSettings.WorkingDir);
+            //,AppSettings.WorkingDir);//, AppSettings.UserPosts);
 	        //Database.SetInitializer(new PsyhotypeDbInitializer());
         }
     }
