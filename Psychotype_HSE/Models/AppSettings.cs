@@ -58,12 +58,13 @@ namespace Psychotype_HSE.Models
         static AppSettings()
         {
             ApplicationId = 6752080;
-            ClientPort = 1111;
             Login = "+79636540385";
             Password = "16032019GD";
+            PythonScriptPath = @"suicideScript.py";
+
             PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
             WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\";
-            PythonScriptPath = @"suicideScript.py";
+            ClientPort = 1111;
 
             // recive local ip adress
             foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))

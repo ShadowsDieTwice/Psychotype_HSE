@@ -157,13 +157,17 @@
                         <h4>Самые популярные однокоренные слова в порядке их появления на странице:</h4>
                         List<Tuple<String, List<String>>> popularWords = Model.PopularWords.response;
                         <ol>
-                            @foreach (Tuple<String, List<String>> item in popularWords)
+                            @for (int i = 0; i < popularWords.Count; i++)
                             {
+                                Tuple<String, List<String>> item = popularWords[i];
                                 String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                                 <li>
-                                    <a href="@link">
-                                        @item.Item1
-                                    </a>
+                                    <span>
+                                        <a href="@link">
+                                            @item.Item1 
+                                        </a>
+                                        <span> - @Model.PopularWords.count[i] повторений.</span>
+                                    </span>
                                     <ul>
                                         @foreach (String word in item.Item2)
                                         {

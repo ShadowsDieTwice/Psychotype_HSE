@@ -15,18 +15,22 @@ namespace Psychotype_HSE.Models
             // список пар <корень, формы>
             public List<Tuple<string, List<String>>> response = new List<Tuple<string, List<string>>>();
 
+            public List<int> count = new List<int>();
+
             public PopularWordsAtributes() { }
 
             public PopularWordsAtributes(Components.User user, DateTime timeFrom,
                                                 DateTime timeTo, int numberOfWords)
             {
-                List<List<String>> popularWords = 
+                List<List<String>> popularWords =
                     user.GetMostPopularWordsOnWall(timeFrom, timeTo, numberOfWords);
 
                 // для всех слов создаем пары <слово, формы>
                 for (int i = 0; i < numberOfWords; i++)
                     if (i + 1 <= popularWords.Count)
                     {
+                        count.Add(popularWords[i].Count);
+
                         HashSet<string> set = new HashSet<string>();
                         foreach (string s in popularWords[i])
                         {
@@ -35,7 +39,7 @@ namespace Psychotype_HSE.Models
                         List<String> list = set.ToList();
                         String leading = list[0];
                         list.RemoveAt(0);
-                        response.Add(new Tuple<string, List<string>>(leading,list));
+                        response.Add(new Tuple<string, List<string>>(leading, list));
                     }
             }
         }
@@ -62,7 +66,7 @@ namespace Psychotype_HSE.Models
 
         public string FullName
         {
-            get { return fullName;  }
+            get { return fullName; }
         }
 
         public string PhotoURL
@@ -130,31 +134,28 @@ namespace Psychotype_HSE.Models
 
                 if (isLinkValid)
                 {
-                    // Link might be valid, meanwhile profile is private.
-                    // We'll treat those as invalid links.
-                    //try
-                    //{
-                        if (isLinkValid)
-                            botProbability = user.IsBot();
-                        else botProbability = 0;
-                    //}
-                    /*catch (Exception)
-                    {
-                        isLinkValid = false;
-                        id = "";
-                        botProbability = 0;
-                    }*/
+                    if (isLinkValid)
+                        botProbability = user.IsBot();
+                    else botProbability = 0;
                 }
 
                 // From this poin we can be sure if link is valid.
                 if (isLinkValid)
                 {
                     var api = Api.Get();
+                    string s = "";
+                    int i = 0;
 
+                    // Get most frequent words
                     popularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
 
+                    // Predict suicide probability
                     suicideProbability = user.SuicideProbability(timeFrom, timeTo, id);
 
+                    // Predict Mayers-Briggs test result
+                    mayersBriggs = user.GetMyerBriggsType();
+
+                    // Get profile description
                     VkNet.Model.User vkUser =
                      api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
 
@@ -170,9 +171,6 @@ namespace Psychotype_HSE.Models
                     }
 
                     photoURL = vkUser.Photo50.AbsoluteUri;
-
-                    string s = "";
-                    int i = 0;
 
                     s = vkUser.Status;
                     if (s != null & s != "")
@@ -196,15 +194,16 @@ namespace Psychotype_HSE.Models
                             break;
                     }
                     description.Add(s);
+
                     s = "";
-                    
-                        if (vkUser.Country != null)
-                            description.Add("страна: " + vkUser.Country.Title);
+
+                    if (vkUser.Country != null)
+                        description.Add("страна: " + vkUser.Country.Title);
                     s = "";
-                    
-                        if (vkUser.City != null)
-                            description.Add("город: " + vkUser.City.Title);
-                        s = "";
+
+                    if (vkUser.City != null)
+                        description.Add("город: " + vkUser.City.Title);
+                    s = "";
 
                     s = vkUser.MobilePhone;
                     if (s != null & s != "")
@@ -249,8 +248,6 @@ namespace Psychotype_HSE.Models
                                 break;
                         }
                     }
-                    
-                    mayersBriggs = user.GetMyerBriggsType();
                 }
                 else
                 {
@@ -263,9 +260,11 @@ namespace Psychotype_HSE.Models
         }
 
         Components.User user = new Components.User("");
-
+        public string raw;
         public PageDataModel() : this("") { }
-        public PageDataModel(string raw_id) { this.Id = raw_id;  }
-
+        public PageDataModel(string raw_id)
+        {
+            this.Id = raw_id;
+        }
     }
 }

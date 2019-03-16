@@ -87,13 +87,13 @@ def countResponce(clientsocket):
     size = int(request[0])
     request = request[1]
 
-    #print("size: " + str(size) + " - " + str(len(request)))
+    #print(size)
+    #print(request)
+    #print(len(request))
     if (len(request) != size):
         request += clientsocket.recv(4*(size - len(request))).decode("utf-32")
 
-    #print("got it")
     lines = request.split("\n")
-    #print(lines)
 
     for text in lines: 
         text = preprocess_text(text)

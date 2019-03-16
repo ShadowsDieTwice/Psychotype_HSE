@@ -106,8 +106,8 @@ namespace Psychotype_HSE.Models.Components
         /// <summary>
         /// Сalculates resulting suicide probability 
         /// </summary>
-        /// <param name="timeFrom"></param>
-        /// <param name="timeTo"></param>
+        /// <param name="timeFrom">Earliest post date</param>
+        /// <param name="timeTo">Latest post date</param>
         /// <param name="writeFile"> Path to SuicidePredictCSV </param>
         /// <param name="readFile"> Path to SuicideResult </param>
         /// <returns></returns>
@@ -119,18 +119,19 @@ namespace Psychotype_HSE.Models.Components
             List<string> texts = GetTexts(timeFrom, timeTo);
             String request = ""; 
             foreach (var text in texts)
-                request += text.Replace("\n", " ") + "\n";
+                if (text != "")
+                    request += text.Replace("\n", " ") + "\n";
             
-            // подключение
-            IPEndPoint ipe = new IPEndPoint(AppSettings.LocalIP, AppSettings.ClientPort);
-            Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(ipe);
-
             if (request.Length > 0)
             {
+                // подключение
+                IPEndPoint ipe = new IPEndPoint(AppSettings.LocalIP, AppSettings.ClientPort);
+                Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                socket.Connect(ipe);
+
                 // передаем в данные
                 request = request.Remove(request.Length - 1);
-                request = $" {request.Length + 1}::" + request;
+                request = $" {request.Length}::" + request;
                 Byte[] bytesSent = Encoding.UTF32.GetBytes(request);
                 Byte[] bytesReceived = new Byte[256];
                 string responce = "";
@@ -168,8 +169,11 @@ namespace Psychotype_HSE.Models.Components
                 if (normalizer == 0)
                     return 0;
 
+                socket.Close();
+
                 return result / normalizer;
             }
+
             return 0;
         }
 
