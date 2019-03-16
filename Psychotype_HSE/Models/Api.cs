@@ -28,7 +28,8 @@ namespace Psychotype_HSE.Models
             api.Authorize(new ApiAuthParams
             {
                 ApplicationId = AppSettings.ApplicationId,
-                AccessToken = AppSettings.AccessToken,
+                Login = AppSettings.Login,
+                Password = AppSettings.Password,
                 Settings = Settings.All
             });
 

@@ -55,7 +55,7 @@
     @using (Html.BeginForm("Index", "Home", FormMethod.Get))
     {
         <nav class="searchbar">
-            @Html.TextBox("query")
+            @Html.TextBox("query", null, new { @class = "searchline" })
             <button class="searchbutton" type="submit">
                 <img src="~/Content/Template/src/img/palm-scan.png" width="25" height="25" alt="submit" />
             </button>
@@ -157,13 +157,17 @@
                         <h4>Самые популярные однокоренные слова в порядке их появления на странице:</h4>
                         List<Tuple<String, List<String>>> popularWords = Model.PopularWords.response;
                         <ol>
-                            @foreach (Tuple<String, List<String>> item in popularWords)
+                            @for (int i = 0; i < popularWords.Count; i++)
                             {
+                                Tuple<String, List<String>> item = popularWords[i];
                                 String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
                                 <li>
-                                    <a href="@link">
-                                        @item.Item1
-                                    </a>
+                                    <span>
+                                        <a href="@link">
+                                            @item.Item1 
+                                        </a>
+                                        <span> - @Model.PopularWords.count[i] повторений.</span>
+                                    </span>
                                     <ul>
                                         @foreach (String word in item.Item2)
                                         {
@@ -238,14 +242,14 @@ case "ISFJ":
                 Распознает наигранность и фальшь в отношениях,  делит людей на своих – чужих, руководя психологической дистанцией. Отстаивает свои взгляды и принципы. Умеет постоять за себя и своих близких, не переносит морального превосходства других людей.  Умеет глубоко анализировать себя и других.
             </p>
 break;
-case "ISTP":
-            <h4>ISTP</h4>
+case "ISTJ":
+            <h4>ISTJ - Организатор, инспектор.</h4>
             <p>
-
+                Любит порядок и строгость, глубоко вникает в работу, анализируя информацию с разных сторон. Отличается некой педантичностью. Реально смотрит на вещи, берется за дело только если точно знает, что сможет его завершить. Вызывает доверие, но предпочитает короткие деловые контакты с другими людьми.
             </p>
 break;
-case "ISTJ":
-            <h4>ISTJ - Мастер, умелец.</h4>
+case "ISTP":
+            <h4>ISTP - Мастер, умелец.</h4>
             <p>
                 Ощущения являются для него главным источником познания мира. Проявляет эмпатию, тонко чувствует и любит других людей, отвергает искусственность и фальшь. Отличается техническим складом ума, любит работать руками, при этом всегда укладываясь в нужные сроки.
             </p>

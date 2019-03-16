@@ -56,70 +56,78 @@ namespace Psychotype_HSE.Models.Components
             VkNet.Model.User usr = api.Users.Get(new long[] { VkId }, ProfileFields.All)[0];
             WallGetObject wall;
             //Предпологаю, что проверка на закрытость страницы уже пройдена
-            wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+            try
             {
-                OwnerId = usr.Id
-            });
+                wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+                {
+                    OwnerId = usr.Id
+                });
 
-            //is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views
+                var posts = wall.WallPosts;
+                int ownPostsCount = 0;
+                int repostsCount = 0;
+                foreach (var post in posts)
+                {
+                    if (post.CopyHistory.Count > 0)
+                        repostsCount++;
+                    else
+                        ownPostsCount++;
+                }
+                //12:ownPosts
+                x[12] = ownPostsCount;
+
+                //13:reposts
+                x[13] = repostsCount;
+
+                int sum = 0;
+                foreach (var post in posts)
+                    sum += post.Views?.Count ?? 0;
+                //14:views
+                x[14] = sum;
+
+                //16:own / repo
+                //19 использовалось как макс. значение при обучении модели
+                x[16] = repostsCount != 0 ? ownPostsCount / repostsCount : 19;
+            }
+            catch (Exception)
+            {
+                x[12] = 0;
+                x[13] = 0;
+                x[14] = 0;
+                x[16] = 19;
+            }
             //0:is_female
-            //1:has_photo
-            //2:friends
-            //3:followers
-            //4:groups
-            //5:pages
-            //6:subscriptions
-            //7:photos
-            //8:user_photo
-            //9:audios
-            //10:videos
-            //11:is_default_link
-            //12:ownPosts
-            //13:reposts
-            //14:views
-            //15:social_networks
-            //16:own / repo
-
-            //м/ж
             x[0] = usr.Sex == VkNet.Enums.Sex.Female ? 1 : 0;
+            //1:has_photo
             x[1] = usr.PhotoId != null ? 1 : 0;
-            //есть фб и тд
-            x[15] = usr.Connections.FacebookId != null ? 1 : 0 + usr.Connections.Instagram != null ? 1 : 0 + usr.Connections.Twitter != null ? 1 : 0 + usr.Connections.Skype != null ? 1 : 0;
-
-            // var counters = Api.Get().Account.GetCounters(CountersFilter.All);
+            //15:social_networks
+            //есть ли фб и тд
+            x[15] = (usr.Connections.FacebookId != null) |
+                     (usr.Connections.Instagram != null) |
+                       (usr.Connections.Twitter != null) |
+                       (usr.Connections.Skype != null) ? 1 : 0;
+            //2:friends
             x[2] = usr.Counters.Friends ?? 0;
+            //3:followers
             x[3] = usr.Counters.Followers ?? 0;
+            //4:groups
             x[4] = usr.Counters.Groups ?? 0;
+            //5:pages
             x[5] = usr.Counters.Pages ?? 0;
+            //6:subscriptions
             x[6] = usr.Counters.Subscriptions ?? 0;
+            //7:photos
             x[7] = usr.Counters.Photos ?? 0;
+            //8:user_photo
             x[8] = usr.Counters.UserPhotos ?? 0;
+            //9:audios
             x[9] = usr.Counters.Audios ?? 0;
+            //10:videos
             x[10] = usr.Counters.Videos ?? 0;
 
             Regex linkMask = new Regex("id_?[0-9]+");
+            //11:is_default_link
             x[11] = linkMask.IsMatch(usr.Domain) ? 1 : 0;
-
-            var posts = wall.WallPosts;
-            int ownPostsCount = 0;
-            int repostsCount = 0;
-            foreach (var post in posts)
-            {
-                if (post.CopyHistory.Count > 0)
-                    repostsCount++;
-                else
-                    ownPostsCount++;
-            }
-            x[12] = ownPostsCount;
-            x[13] = repostsCount;
-
-            int sum = 0;
-            foreach (var post in posts)
-                sum += post.Views?.Count ?? 0;
-            x[14] = sum;
-
-            //19 использовалось как макс. значение при обучении модели
-            x[16] = repostsCount != 0 ? ownPostsCount / repostsCount : 19;
 
             UserNumericParams = x;
             return x;
@@ -162,30 +170,6 @@ namespace Psychotype_HSE.Models.Components
             // double[] weights = new double[] {  };
             double[] weights = new double[] { 0.17529813,  0.37443151,  0.16527531, -0.38677119,  0.12411282, -0.12357333, -0.16544805,  0.121947  ,  0.02655503,  0.17872141, 0.18261538,  0.13771823,  0.28387095,  0.0497508 , -0.07209034,  -0.0931934 , -0.04085194, 0.00224221 };
             return LogRegression(weights) > 0.5 ? 'J' : 'P';
-        }
-       
-        /// <summary>     
-        /// Writes a sample of friends for using it in model for bots
-        /// </summary>
-        /// <param name="filePath">Path to .csv file</param>
-        public void GetFriendsForBots(string filePath)
-        {            
-            var api = Api.Get();
-
-            // users = api.Groups.GetMembers(new GroupsGetMembersParams() { GroupId = VkId.ToString(), Fields = UsersFields.All });
-            var users = api.Friends.Get(new FriendsGetParams() { UserId = VkId });
-            //Fully overwrites file 
-
-            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
-            {
-                sw.WriteLine("name;surname;is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views;");
-                foreach (var usr in users)
-                {
-                    WriteUser(sw, usr);
-                }
-                //foreach (var text in texts)
-                sw.WriteLine();
-            }
         }
 
     }

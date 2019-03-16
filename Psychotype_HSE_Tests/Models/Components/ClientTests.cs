@@ -9,6 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Psychotype_HSE.Util;
 using Psychotype_HSE.Models;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace Psychotype.Models.Components.Tests
 {
@@ -37,20 +40,7 @@ namespace Psychotype.Models.Components.Tests
             //Throws NullReferenceException
             Client cl = new Community("net_takogo_pablica_i_ya_nadeyus_ne_budet_123");
         }
-
-        [TestMethod()]
-        public void SaveTextsToCSV()
-        {
-            Client cl = new User("n0ize34");
-            string filePath = @"../../TestFiles/suicide_predict.csv";
-            cl.SaveTextsToCSV(DateTime.MinValue, DateTime.MaxValue, filePath);
-            //+ Check correctness with your eyes
-            string[] lines = File.ReadAllLines(filePath);
-            //If that post still exists
-            Assert.IsTrue(lines.Contains("тест тест тест тест тест тест вышка вышка вышка вышка привет пока это для проекта групповая динамика зачем это"));
-        }
-
-
+        
         [TestMethod()]
         public void SuisideProbability()
         {
@@ -58,12 +48,19 @@ namespace Psychotype.Models.Components.Tests
             
             Client cl = new User("durov");
             string id = cl.Link;
-            string workingDir = AppSettings.WorkingDir;
+            // calling script to process data and make prediction
+            PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath);
+            Thread.Sleep(10000);
+            //get prediction 
+            double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, id);
 
-            PythonRunner.RunScript(@"../../../Psychotype_HSE/Util/Scripts/suicideScript.py", AppSettings.PythonPath,
-                workingDir);//, filePath1); // переписать тест
-                
-            double res = cl.SuicideProbability(DateTime.MinValue, DateTime.MaxValue, AppSettings.WorkingDir, id);
+            //disabling script
+            IPEndPoint ipe = new IPEndPoint(AppSettings.LocalIP, AppSettings.ClientPort);
+            Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(ipe);
+            Byte[] bytesSent = Encoding.UTF32.GetBytes("~exit~::");
+            socket.Send(bytesSent, bytesSent.Length, 0);
+
             //+ Check correctness with your eyes
             Console.WriteLine(res);
             Assert.IsTrue(res < 0.999 && res >= 0.00);            

@@ -9,6 +9,7 @@ import numpy as np
 import sys
 import os
 from time import sleep
+import socket
 
 def precision(y_true, y_pred):
     """Precision metric.
@@ -65,75 +66,52 @@ SENTENCE_LENGTH = 250
 # Размер словаря
 NUM = 100000
 
-"""fileShutdown = str(sys.argv[3])"""
 
-#filePathCSV = str(sys.argv[1])
-workingDir = str(sys.argv[1])
-#filePathStart = str(sys.argv[2])
+WAITLIST_SIZE = 200
+SOCKET_NUM = 1111
 
-while True :
-    if (len(os.listdir(workingDir)) != 0):
-        for file in os.listdir(workingDir):
-            if file.endswith(".csv"):
-                try:
-                    id = os.path.splitext(os.path.basename(file))[0]
-                    
-                    filePathStart = workingDir + '\\' + id + '.csv'
-                    filePathRes = workingDir + '\\' + id + '.txt'
-                    print(filePathStart)
-                    fileFrom = io.open(filePathStart, mode="r", encoding="utf-8")
-                    fileTo = open(filePathRes, 'w')
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((socket.gethostname(), SOCKET_NUM))
 
-                    lines = fileFrom.readlines()
-                    print(filePathRes)
-                    for text in lines: 
-                        text = preprocess_text(text)
-                        text_fin = get_sequences(tokenizer, [text])
-                        predicted_test = np.round(model.predict(text_fin))
-                        #print('easter egg 1')
-                        fileTo.write(str((predicted_test[0][0] + 1) % 2))
-                        fileTo.write("\n")
-                    fileTo.close()
-                    fileFrom.close()
-                    #print('easter egg 2')
-                    os.remove(filePathStart)
-                except:
-                    sleep(0.2)
-                    #print('easter egg 3')
-                #os.rename(filePathCSV, filePathCSV + ".temp")
+s.listen(WAITLIST_SIZE)
 
-        
-"""
-    if os.path.isfile(filePathStart) :
-        fileFrom = open(filePathStart, mode="r", encoding="utf-8", errors="ignore")
-        fileTo = open(filePathCSV, 'a')
+def countResponce(clientsocket):
+    request = clientsocket.recv(1024).decode("utf-32")
+    response = ""
 
-        lines = fileFrom.readlines()
-        
-        for text in lines : 
-            text = preprocess_text(text)
-            text_fin = get_sequences(tokenizer, [text])
-            predicted_test = np.round(model.predict(text_fin))
-        
-            fileTo.write(str((predicted_test[0][0] + 1) % 2))
-            fileTo.write("\n")
-        fileTo.close()
-        fileFrom.close()
-        os.remove(filePathStart)
-        os.rename(filePathCSV, filePathCSV + ".temp")
-        
-if os.path.isfile(filePathStart) :
-	file.write("hehehe")
-	fileFrom = io.open(filePathStart, mode="r", encoding="utf-8")
-	fileTo = open(filePathCSV, 'a')
-        
-	lines = fileFrom.readlines()
+    request = request.split("::")
 
-	fileTo.write(str(1.0))
-	fileTo.write(str(1.0))
-	fileTo.write(str(0.0))
-	file.write("")
-	fileTo.close()
-	fileFrom.close()
-	os.remove(filePathStart)
-	os.rename(filePathCSV, filePathCSV + ".temp")"""
+    if (request[0] == "~exit~"):
+        raise Exception("Program interrupted")
+
+    size = int(request[0])
+    request = request[1]
+
+    #print(size)
+    #print(request)
+    #print(len(request))
+    if (len(request) != size):
+        request += clientsocket.recv(4*(size - len(request))).decode("utf-32")
+
+    lines = request.split("\n")
+
+    for text in lines: 
+        text = preprocess_text(text)
+        text_fin = get_sequences(tokenizer, [text])
+        predicted_test = np.round(model.predict(text_fin))
+        response += str((predicted_test[0][0] + 1) % 2) +"\n"
+
+    clientsocket.send(bytes(response,"utf-8"))
+    clientsocket.close()
+
+
+while True:
+	clientsocket, adress = s.accept()
+    
+	try:
+		countResponce(clientsocket)
+	except (Exception):
+		print("exit")
+		break
+    
+	print(f"{adress} conneted")

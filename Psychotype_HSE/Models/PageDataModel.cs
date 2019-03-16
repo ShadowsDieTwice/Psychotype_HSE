@@ -11,22 +11,26 @@ namespace Psychotype_HSE.Models
         public class PopularWordsAtributes
         {
             // префикс для получения ссылок на словарь
-            public static string dictLink = "https://ru.wiktionary.org/wiki/";
+            public static string dictLink = "https://wiktionary.org/wiki/";
             // список пар <корень, формы>
             public List<Tuple<string, List<String>>> response = new List<Tuple<string, List<string>>>();
+
+            public List<int> count = new List<int>();
 
             public PopularWordsAtributes() { }
 
             public PopularWordsAtributes(Components.User user, DateTime timeFrom,
                                                 DateTime timeTo, int numberOfWords)
             {
-                List<List<String>> popularWords = 
+                List<List<String>> popularWords =
                     user.GetMostPopularWordsOnWall(timeFrom, timeTo, numberOfWords);
 
                 // для всех слов создаем пары <слово, формы>
                 for (int i = 0; i < numberOfWords; i++)
                     if (i + 1 <= popularWords.Count)
                     {
+                        count.Add(popularWords[i].Count);
+
                         HashSet<string> set = new HashSet<string>();
                         foreach (string s in popularWords[i])
                         {
@@ -35,7 +39,7 @@ namespace Psychotype_HSE.Models
                         List<String> list = set.ToList();
                         String leading = list[0];
                         list.RemoveAt(0);
-                        response.Add(new Tuple<string, List<string>>(leading,list));
+                        response.Add(new Tuple<string, List<string>>(leading, list));
                     }
             }
         }
@@ -62,7 +66,7 @@ namespace Psychotype_HSE.Models
 
         public string FullName
         {
-            get { return fullName;  }
+            get { return fullName; }
         }
 
         public string PhotoURL
@@ -103,6 +107,8 @@ namespace Psychotype_HSE.Models
             set
             {
                 string[] splitedId;
+                var api = Api.Get();
+                VkNet.Model.User vkUser = new VkNet.Model.User();
 
                 isLinkValid = false;
 
@@ -121,51 +127,33 @@ namespace Psychotype_HSE.Models
                         throw new Exception("Void input");
                     user = new Components.User(id);
                     isLinkValid = true;
+                    // Get profile description
+                    vkUser =
+                     api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
+                    botProbability = user.IsBot();
                 }
                 catch (Exception)
                 {
                     id = "";
                     isLinkValid = false;
+                    botProbability = 0;
                 }
-
-                if (isLinkValid)
-                {
-                    // Link might be valid, meanwhile profile is private.
-                    // We'll treat those as invalid links.
-                    try
-                    {
-                        if (isLinkValid)
-                            botProbability = user.IsBot();
-                        else botProbability = 0;
-                    }
-                    catch (Exception)
-                    {
-                        isLinkValid = false;
-                        id = "";
-                        botProbability = 0;
-                    }
-                }
-
+                
                 // From this poin we can be sure if link is valid.
                 if (isLinkValid)
                 {
-                    //string curDir = "C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Files\\";// Directory.GetParent(Directory.GetCurrentDirectory()).FullName + "/Files/"; //.GetCurrentDirectory();
-                    //string fileData = AppSettings.WorkingDir + id + ".csv";
-                    //string fileRes = AppSettings.WorkingDir + id + ".txt";
+                    string s = "";
+                    int i = 0;
 
-                    //"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Files\"
-
-                    // вызывается отдельно
-                    //Util.PythonRunner.RunScript("C:\\Users\\1\\Source\\Repos\\myrachins\\Psychotype_HSE_v2\\Psychotype_HSE\\Util\\Scripts\\suicideScript.py",
-                    //    AppSettings.PythonPath, curDir);//, fileData);
-                    var api = Api.Get();
-
+                    // Get most frequent words
                     popularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
 
-                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, AppSettings.WorkingDir, id);
+                    // Predict suicide probability
+                    suicideProbability = user.SuicideProbability(timeFrom, timeTo, id);
 
-                    VkNet.Model.User vkUser =
-                     api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
+                    // Predict Mayers-Briggs test result
+                    mayersBriggs = user.GetMyerBriggsType();
+
 
                     try
                     {
@@ -178,10 +166,7 @@ namespace Psychotype_HSE.Models
                         fullName = "ФИО недоступно";
                     }
 
-                    photoURL = vkUser.Photo50.AbsoluteUri;// vkUser.PhotoMax.AbsoluteUri;//Photo200.AbsoluteUri;
-
-                    string s = "";
-                    int i = 0;
+                    photoURL = vkUser.Photo50.AbsoluteUri;
 
                     s = vkUser.Status;
                     if (s != null & s != "")
@@ -205,15 +190,16 @@ namespace Psychotype_HSE.Models
                             break;
                     }
                     description.Add(s);
+
                     s = "";
-                    
-                        if (vkUser.Country != null)
-                            description.Add("страна: " + vkUser.Country.Title);
+
+                    if (vkUser.Country != null)
+                        description.Add("страна: " + vkUser.Country.Title);
                     s = "";
-                    
-                        if (vkUser.City != null)
-                            description.Add("город: " + vkUser.City.Title);
-                        s = "";
+
+                    if (vkUser.City != null)
+                        description.Add("город: " + vkUser.City.Title);
+                    s = "";
 
                     s = vkUser.MobilePhone;
                     if (s != null & s != "")
@@ -258,30 +244,6 @@ namespace Psychotype_HSE.Models
                                 break;
                         }
                     }
-                    //vkUser = api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.Counters).First();
-                    //if (vkUser.Counters.Groups.HasValue && vkUser.Counters.Groups.Value != 0)
-                    {
-                        s = "";
-                        i = id.GetHashCode();
-
-                        if (i / 2 == 0) s += "I";
-                        else s += "E";
-                        i >>= 2;
-
-                        if (i / 2 == 0) s += "S";
-                        else s += "N";
-                        i >>= 2;
-
-                        if (i / 2 == 0) s += "T";
-                        else s += "F";
-                        i >>= 2;
-
-                        if (i / 2 == 0) s += "J";
-                        else s += "P";
-                        i >>= 2;
-
-                        mayersBriggs = s;
-                    }
                 }
                 else
                 {
@@ -294,11 +256,11 @@ namespace Psychotype_HSE.Models
         }
 
         Components.User user = new Components.User("");
-
-        //static public Components.User User { get { return user; }  }
-
+        public string raw;
         public PageDataModel() : this("") { }
-        public PageDataModel(string raw_id) { this.Id = raw_id;  }
-
+        public PageDataModel(string raw_id)
+        {
+            this.Id = raw_id;
+        }
     }
 }

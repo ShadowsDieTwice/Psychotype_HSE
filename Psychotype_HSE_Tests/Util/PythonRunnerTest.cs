@@ -15,7 +15,7 @@ namespace Psychotype_HSE_Tests.Util
         [TestMethod()]
         public void RunTest()
         {
-            PythonRunner.RunScript(@"../../Scripts/script.py", AppSettings.PythonPath, "arg1");//, "arg2");
+            PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath);
         }
     }
 }

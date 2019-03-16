@@ -9,8 +9,12 @@ using Psychotype_HSE.Util;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Text;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using VkNet.Model.RequestParams;
 using VkNet.Model.Attachments;
-using VkNet.Exception;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -57,29 +61,12 @@ namespace Psychotype_HSE.Models.Components
         public virtual List<string> GetTexts(DateTime timeFrom, DateTime timeTo)
         {
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            List<string> texts = new List<string>();
+            List<string> texts = new List<string>();    
             foreach (Post post in posts)
             {
                 texts.Add(post.Text);
             }
             return texts;
-        }
-
-        /// <summary>
-        /// Writes all texts to csv file with header "text"
-        /// </summary>     
-        public virtual void SaveTextsToCSV(DateTime timeFrom, DateTime timeTo, string filePath = null) //AppSettings.SuicidePredictCSV)
-        {
-            if (filePath == null)
-                filePath = AppSettings.UserPosts;
-
-            List<string> texts = GetTexts(timeFrom, timeTo);
-            //Fully overwrites file 
-            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
-            {
-                foreach (var text in texts)
-                    sw.WriteLine(text.Replace("\n", " "));
-            }
         }
 
         /// <summary>
@@ -90,21 +77,27 @@ namespace Psychotype_HSE.Models.Components
         {
             List<Post> curPosts = new List<Post>();
             Thread.Sleep(300);
-            WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+            WallGetParams wallParams = new WallGetParams();
+            wallParams.OwnerId = VkId;
+            try
             {
-                OwnerId = VkId
-            });
-
-            foreach (Post post in wall.WallPosts)
-            {
-                var innerPosts = post.CopyHistory;
-                foreach (var innerPost in innerPosts)
+                WallGetObject wall = Api.Get().Wall.Get(wallParams, true);
+                foreach (Post post in wall.WallPosts)
                 {
-                    if (innerPost.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
-                        curPosts.Add(innerPost);
+                    var innerPosts = post.CopyHistory;
+                    foreach (var innerPost in innerPosts)
+                    {
+                        if (innerPost.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                            curPosts.Add(innerPost);
+                    }
+                    if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                        curPosts.Add(post);
                 }
-                if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
-                    curPosts.Add(post);
+            }
+            catch
+            {
+                // bug in library caused by generic casting
+                // https://github.com/vknet/vk/pull/744
             }
 
             return curPosts;
@@ -113,94 +106,75 @@ namespace Psychotype_HSE.Models.Components
         /// <summary>
         /// Сalculates resulting suicide probability 
         /// </summary>
-        /// <param name="timeFrom"></param>
-        /// <param name="timeTo"></param>
+        /// <param name="timeFrom">Earliest post date</param>
+        /// <param name="timeTo">Latest post date</param>
         /// <param name="writeFile"> Path to SuicidePredictCSV </param>
         /// <param name="readFile"> Path to SuicideResult </param>
         /// <returns></returns>
-        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string dir, string id)
-            // string writeFile, string readFile)
+        public virtual double SuicideProbability(DateTime timeFrom, DateTime timeTo, string id)
         {
-            //if (readFile == null)
-            //    readFile = AppSettings.SuicideResult;
-            //if (writeFile == null)
-            //    writeFile = AppSettings.SuicidePredictCSV;
-            string writeFile = dir + "\\" + id + ".csv";
-            string readFile = dir + "\\" + id + ".txt";
-
             List<Post> posts = GetAllPosts(timeFrom, timeTo);
-            if (!File.Exists(writeFile))
-            {
-                SaveTextsToCSV(timeFrom, timeTo, writeFile);// + ".temp");
-            }
-            //File.Delete(writeFile);
-            //File.Move(writeFile + ".temp", writeFile);
 
-            List<double> probs = new List<double>();
+            // подготавливаем сообщение
+            List<string> texts = GetTexts(timeFrom, timeTo);
+            String request = ""; 
+            foreach (var text in texts)
+                if (text != "")
+                    request += text.Replace("\n", " ") + "\n";
             
-            // все виснет
-            while (!File.Exists(readFile))
+            if (request.Length > 0)
             {
-                Thread.Sleep(100);
-            }
+                // подключение
+                IPEndPoint ipe = new IPEndPoint(AppSettings.LocalIP, AppSettings.ClientPort);
+                Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                socket.Connect(ipe);
 
-            //File.Move(readFile + ".temp", readFile);
+                // передаем в данные
+                request = request.Remove(request.Length - 1);
+                request = $" {request.Length}::" + request;
+                Byte[] bytesSent = Encoding.UTF32.GetBytes(request);
+                Byte[] bytesReceived = new Byte[256];
+                string responce = "";
+                socket.Send(bytesSent, bytesSent.Length, 0);
 
-            // extra precautions for reading from file in use
-            while (true)
-            {
-                try
+                // получаем результат
+                int bytes = socket.Receive(bytesReceived, bytesReceived.Length, 0);
+                responce = Encoding.UTF8.GetString(bytesReceived, 0, bytes);
+                List<double> probs = new List<double>();
+
+                foreach (string prob in responce.Split('\n'))
                 {
-                    using (StreamReader sr = new StreamReader(readFile, System.Text.Encoding.UTF8))
+                    try
                     {
-                        string str;
-                        while ((str = sr.ReadLine()) != null)
-                        {
-                            try
-                            {
-                                probs.Add(double.Parse(str));
-                            }
-                            catch (FormatException)
-                            {
-                                //Because of commas in russian doubles
-                                str = str.Replace(".", ",");
-                                probs.Add(double.Parse(str));
-                            }
-                        }
-                        break;
+                        probs.Add(double.Parse(prob));
+                    }
+                    catch (FormatException)
+                    {
+                        //Because of commas in russian doubles
+                        String str = prob.Replace(".", ",");
+                        if (str != "") probs.Add(double.Parse(str));
+                        //else probs.Add(0);
                     }
                 }
-                catch (IOException)
+
+                double result = 0,
+                    normalizer = 0, //Sum of weights
+                    w;
+                for (int i = 0; i < probs.Count; i++)
                 {
-                    Thread.Sleep(100);
+                    w = PostWeight(posts[i]);
+                    result += probs[i] * w;
+                    normalizer += w;
                 }
+                if (normalizer == 0)
+                    return 0;
+
+                socket.Close();
+
+                return result / normalizer;
             }
 
-
-
-            try
-            {
-                File.Delete(readFile);
-            }
-            catch
-            {
-
-            }
-            //if (probs.Count != posts.Count)
-            //    throw new FormatException($"Posts count isn't equal to probabilities count: {posts.Count} != {probs.Count}");
-
-            //Finding weighted arithmetic mean
-            double result = 0,  
-                normalizer = 0, //Sum of weights
-                w;
-            for(int i = 0; i < posts.Count; i++)
-            {
-                w = PostWeight(posts[i]);
-                result += probs[i] * w;
-                normalizer += w;
-            }
-
-            return result / normalizer;
+            return 0;
         }
 
         /// <summary>
@@ -209,6 +183,8 @@ namespace Psychotype_HSE.Models.Components
         public virtual double PostWeight(Post post)
         {
             //difference in days
+            if (post.Text == "")
+                return 0;
             TimeSpan span = DateTime.Now - post.Date.Value;
             return 1 / Math.Log(span.TotalDays);
         }
@@ -233,118 +209,16 @@ namespace Psychotype_HSE.Models.Components
                     if (word.Length > 2) //чтобы убрать всякие предлоги и тд
                     {
                         string key = RussianStemmer.GetTheBase(word);
-                        if (!popularWords.ContainsKey(key))
-                            popularWords.Add(key, new List<string>());
+	                    if (!popularWords.ContainsKey(key))
+							popularWords.Add(key, new List<string>());
 
-                        popularWords[key].Add(word);
-                    }
+	                    popularWords[key].Add(word);
+					}
                 }
             }
 
             var popularKeys = popularWords.OrderByDescending(pair => pair.Value.Count).Select(pair => pair.Value);
             return popularKeys.Take(numberOfWords).ToList();
-        }
-
-        
-        /// <summary>
-        /// Writes data about user to string in .csv file
-        /// </summary>       
-        protected void WriteUser(StreamWriter sw, VkNet.Model.User usr)
-        {        
-            var api = Api.Get();
-            //TODO - тут в конце System.FormatException
-            usr = api.Users.Get(new long[] { usr.Id }, ProfileFields.All)[0];
-
-            //Проверка - закрыта ли страница
-            WallGetObject wall;
-            try
-            {
-
-                wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
-                {
-                    OwnerId = usr.Id
-                });
-            }
-            catch (UserDeletedOrBannedException)
-            {
-                //если профиль приватный
-                return;
-            }
-            catch (CannotBlacklistYourselfException)
-            {
-                //если профиль приватный
-                return;
-            }
-            catch (InvalidCastException)
-            {
-                //???
-                return;
-            }
-            catch (InvalidParameterException)
-            {
-                //???
-                return;
-            }
-
-
-            //Для дебага
-            swWrite(sw, usr.FirstName);
-            swWrite(sw, usr.LastName);
-
-            //м/ж
-            swWrite(sw, (usr.Sex == VkNet.Enums.Sex.Female ? 1 : 0).ToString());
-
-            //есть ава 
-            //swWrite(sw, usr.HasPhoto);
-            swWrite(sw, usr.PhotoId != null ? 1 : 0);
-            //есть фб и тд
-            swWrite(sw, (usr.Connections.FacebookId != null ? 1 : 0).ToString());
-            swWrite(sw, (usr.Connections.Instagram != null ? 1 : 0).ToString());
-            swWrite(sw, (usr.Connections.Twitter != null ? 1 : 0).ToString());
-            swWrite(sw, (usr.Connections.Skype != null ? 1 : 0).ToString());
-
-            // var counters = Api.Get().Account.GetCounters(CountersFilter.All);
-            swWrite(sw, usr.Counters.Friends);
-            swWrite(sw, usr.Counters.Followers);
-            swWrite(sw, usr.Counters.Groups);
-            swWrite(sw, usr.Counters.Pages);
-
-            swWrite(sw, usr.Counters.Subscriptions);
-            swWrite(sw, usr.Counters.Photos);
-            swWrite(sw, usr.Counters.UserPhotos?.ToString() ?? null);
-            swWrite(sw, usr.Counters.Audios?.ToString() ?? null);
-            swWrite(sw, usr.Counters.Videos?.ToString() ?? null);
-            //swWrite(sw, id.Counters.Albums.ToString());
-            Regex linkMask = new Regex("id_?[0-9]+");
-            swWrite(sw, linkMask.IsMatch(usr.Domain) ? 1 : 0);
-
-            var id = usr.Id;              
-            var posts = wall.WallPosts;
-            int ownPostsCount = 0;
-            int repostsCount = 0;
-            foreach (var post in posts)
-            {
-                if (post.CopyHistory.Count > 0)
-                    repostsCount++;
-                else
-                    ownPostsCount++;
-            }
-            swWrite(sw, ownPostsCount);
-            swWrite(sw, repostsCount);
-
-            int sum = 0;
-            foreach (var post in posts)
-                sum += post.Views?.Count ?? 0;
-            swWrite(sw, sum.ToString());
-        
-        }
-        protected void swWrite(StreamWriter sw, object str)
-        {
-            if (str == null)
-                sw.Write("null");
-            else
-                sw.Write(str.ToString());
-            sw.Write(";");
         }
     }
 }

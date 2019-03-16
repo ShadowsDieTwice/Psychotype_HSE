@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Psychotype_HSE.Models
 {
@@ -36,15 +38,43 @@ namespace Psychotype_HSE.Models
         /// and leaves probobilities (id.txt).
         /// </summary>
         public static string WorkingDir { get; set; }
+        /// <summary>
+        /// Port on localhost, that make predictions about sucide.
+        /// </summary>
+        public static int ClientPort { get; set; }
+        /// <summary>
+        /// IPv4 adress of curent machine
+        /// </summary>
+        public static IPAddress LocalIP { get; set; }
+        /// <summary>
+        /// VK login
+        /// </summary>
+        public static string Login { set; get; }
+        /// <summary>
+        /// VK password
+        /// </summary>
+        public static string Password { set; get; }
 
         static AppSettings()
         {
             ApplicationId = 6752080;
-            AccessToken = "YOUR_TOKEN";
+            Login = "+79636540385";
+            Password = "16032019GD";
+            PythonScriptPath = @"suicideScript.py";
+
             PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
-            PythonScriptPath = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Util\Scripts\suicideScript.py";
-            
-            WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\Files\";
+            WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\";
+            ClientPort = 1111;
+
+            // recive local ip adress
+            foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    LocalIP = ip;
+                    break;
+                }
+            }
         }
     }
 }
