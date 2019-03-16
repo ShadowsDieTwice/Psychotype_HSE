@@ -225,6 +225,7 @@
     <Content Include="Content\Template\src\fonts\Andika-R.ttf" />
     <Content Include="Content\Template\src\fonts\beer money.ttf" />
     <Content Include="Content\Template\src\fonts\Molot.otf" />
+    <None Include="Properties\PublishProfiles\PsychotypeHSE19 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

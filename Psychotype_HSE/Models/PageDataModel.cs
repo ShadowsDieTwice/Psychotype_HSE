@@ -107,6 +107,8 @@ namespace Psychotype_HSE.Models
             set
             {
                 string[] splitedId;
+                var api = Api.Get();
+                VkNet.Model.User vkUser = new VkNet.Model.User();
 
                 isLinkValid = false;
 
@@ -125,24 +127,21 @@ namespace Psychotype_HSE.Models
                         throw new Exception("Void input");
                     user = new Components.User(id);
                     isLinkValid = true;
+                    // Get profile description
+                    vkUser =
+                     api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
+                    botProbability = user.IsBot();
                 }
                 catch (Exception)
                 {
                     id = "";
                     isLinkValid = false;
+                    botProbability = 0;
                 }
-
-                if (isLinkValid)
-                {
-                    if (isLinkValid)
-                        botProbability = user.IsBot();
-                    else botProbability = 0;
-                }
-
+                
                 // From this poin we can be sure if link is valid.
                 if (isLinkValid)
                 {
-                    var api = Api.Get();
                     string s = "";
                     int i = 0;
 
@@ -155,9 +154,6 @@ namespace Psychotype_HSE.Models
                     // Predict Mayers-Briggs test result
                     mayersBriggs = user.GetMyerBriggsType();
 
-                    // Get profile description
-                    VkNet.Model.User vkUser =
-                     api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.All).First();
 
                     try
                     {
