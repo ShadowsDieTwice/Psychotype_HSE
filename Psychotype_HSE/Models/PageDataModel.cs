@@ -11,7 +11,7 @@ namespace Psychotype_HSE.Models
         public class PopularWordsAtributes
         {
             // префикс для получения ссылок на словарь
-            public static string dictLink = "https://ru.wiktionary.org/wiki/";
+            public static string dictLink = "https://wiktionary.org/wiki/";
             // список пар <корень, формы>
             public List<Tuple<string, List<String>>> response = new List<Tuple<string, List<string>>>();
 
@@ -132,18 +132,18 @@ namespace Psychotype_HSE.Models
                 {
                     // Link might be valid, meanwhile profile is private.
                     // We'll treat those as invalid links.
-                    try
-                    {
+                    //try
+                    //{
                         if (isLinkValid)
                             botProbability = user.IsBot();
                         else botProbability = 0;
-                    }
-                    catch (Exception)
+                    //}
+                    /*catch (Exception)
                     {
                         isLinkValid = false;
                         id = "";
                         botProbability = 0;
-                    }
+                    }*/
                 }
 
                 // From this poin we can be sure if link is valid.

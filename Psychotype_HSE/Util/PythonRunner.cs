@@ -17,12 +17,12 @@ namespace Psychotype_HSE.Util
             ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
             startInfo.FileName = pythonPath;
             startInfo.Arguments = scriptPath;
-            startInfo.WorkingDirectory =AppSettings.WorkingDir +  "Util\\Scripts\\";
+            startInfo.WorkingDirectory = AppSettings.WorkingDir +  "Util\\Scripts\\";
             startInfo.ErrorDialog = true;
             process.StartInfo = startInfo;
             process.Start();
             string s = System.IO.Directory.GetCurrentDirectory();
-            Console.WriteLine();
+            //Console.WriteLine();
         }
     }
 }

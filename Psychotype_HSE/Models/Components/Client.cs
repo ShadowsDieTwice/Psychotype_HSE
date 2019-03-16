@@ -13,6 +13,8 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using VkNet.Model.RequestParams;
+using VkNet.Model.Attachments;
 
 namespace Psychotype_HSE.Models.Components
 {
@@ -75,21 +77,27 @@ namespace Psychotype_HSE.Models.Components
         {
             List<Post> curPosts = new List<Post>();
             Thread.Sleep(300);
-            WallGetObject wall = Api.Get().Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+            WallGetParams wallParams = new WallGetParams();
+            wallParams.OwnerId = VkId;
+            try
             {
-                OwnerId = VkId
-            });
-
-            foreach (Post post in wall.WallPosts)
-            {
-                var innerPosts = post.CopyHistory;
-                foreach (var innerPost in innerPosts)
+                WallGetObject wall = Api.Get().Wall.Get(wallParams, true);
+                foreach (Post post in wall.WallPosts)
                 {
-                    if (innerPost.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
-                        curPosts.Add(innerPost);
+                    var innerPosts = post.CopyHistory;
+                    foreach (var innerPost in innerPosts)
+                    {
+                        if (innerPost.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                            curPosts.Add(innerPost);
+                    }
+                    if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
+                        curPosts.Add(post);
                 }
-                if (post.Date.Value.Date <= timeTo && post.Date.Value.Date >= timeFrom)
-                    curPosts.Add(post);
+            }
+            catch
+            {
+                // bug in library caused by generic casting
+                // https://github.com/vknet/vk/pull/744
             }
 
             return curPosts;
@@ -118,47 +126,51 @@ namespace Psychotype_HSE.Models.Components
             Socket socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(ipe);
 
-            // передаем в данные
-            request = request.Remove(request.Length - 1);
-            request = $" {request.Length + 1}::" + request;
-            Byte[] bytesSent = Encoding.UTF32.GetBytes(request);
-            Byte[] bytesReceived = new Byte[256];
-            string responce = "";
-            socket.Send(bytesSent, bytesSent.Length, 0);
-
-            // получаем результат
-            int bytes = socket.Receive(bytesReceived, bytesReceived.Length, 0);
-            responce = Encoding.UTF8.GetString(bytesReceived, 0, bytes);
-            List<double> probs = new List<double>();
-            
-            foreach (string prob in responce.Split('\n'))
+            if (request.Length > 0)
             {
-                try
-                {
-                    probs.Add(double.Parse(prob));
-                }
-                catch (FormatException)
-                {
-                    //Because of commas in russian doubles
-                    String str = prob.Replace(".", ",");
-                    if (str != "") probs.Add(double.Parse(str));
-                    //else probs.Add(0);
-                }
-            }
+                // передаем в данные
+                request = request.Remove(request.Length - 1);
+                request = $" {request.Length + 1}::" + request;
+                Byte[] bytesSent = Encoding.UTF32.GetBytes(request);
+                Byte[] bytesReceived = new Byte[256];
+                string responce = "";
+                socket.Send(bytesSent, bytesSent.Length, 0);
 
-            double result = 0,  
-                normalizer = 0, //Sum of weights
-                w;
-            for(int i = 0; i < probs.Count; i++)
-            {
-                w = PostWeight(posts[i]);
-                result += probs[i] * w;
-                normalizer += w;
-            }
-            if (normalizer == 0)
-                return 0;
+                // получаем результат
+                int bytes = socket.Receive(bytesReceived, bytesReceived.Length, 0);
+                responce = Encoding.UTF8.GetString(bytesReceived, 0, bytes);
+                List<double> probs = new List<double>();
 
-            return result / normalizer;
+                foreach (string prob in responce.Split('\n'))
+                {
+                    try
+                    {
+                        probs.Add(double.Parse(prob));
+                    }
+                    catch (FormatException)
+                    {
+                        //Because of commas in russian doubles
+                        String str = prob.Replace(".", ",");
+                        if (str != "") probs.Add(double.Parse(str));
+                        //else probs.Add(0);
+                    }
+                }
+
+                double result = 0,
+                    normalizer = 0, //Sum of weights
+                    w;
+                for (int i = 0; i < probs.Count; i++)
+                {
+                    w = PostWeight(posts[i]);
+                    result += probs[i] * w;
+                    normalizer += w;
+                }
+                if (normalizer == 0)
+                    return 0;
+
+                return result / normalizer;
+            }
+            return 0;
         }
 
         /// <summary>

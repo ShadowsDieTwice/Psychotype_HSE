@@ -59,8 +59,8 @@ namespace Psychotype_HSE.Models
         {
             ApplicationId = 6752080;
             ClientPort = 1111;
-            Login = "88005553535";
-            Password = "88005553535gd";
+            Login = "+79636540385";
+            Password = "16032019GD";
             PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
             WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\";
             PythonScriptPath = @"suicideScript.py";
