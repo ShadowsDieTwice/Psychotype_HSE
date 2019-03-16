@@ -70,7 +70,7 @@ namespace Psychotype_HSE_Tests.Models.Components
             User[] users = new User[] { new User("larorr"), new User("maxim_rachinskiy"), new User("id_237641570"), new User("id182840340"), new User("n0ize34") };
 
             foreach (var user in users)
-                Console.WriteLine("{0} : {1}", user.Link, user.GetMyerBriggsType()));
+                Console.WriteLine("{0} : {1}", user.Link, user.GetMyerBriggsType());
             //using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testMB1.txt", false, System.Text.Encoding.UTF8))
             //{
             //    foreach(var user in users)
