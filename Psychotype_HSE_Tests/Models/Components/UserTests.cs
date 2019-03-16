@@ -55,11 +55,24 @@ namespace Psychotype_HSE_Tests.Models.Components
 
         [TestMethod()]
         public void MyerBriggs1()
-        {
-            User user = new User("larorr");        
+        {           
+            User user = new User("larorr");
+            Console.WriteLine(string.Format("{0}", user.GetMyerBriggsType()));
             using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testMB1.txt", false, System.Text.Encoding.UTF8))
             {
-                sw.WriteLine(string.Format("{0}", user.GetMyerBriggsType()));
+                //sw.WriteLine(string.Format("{0}", user.GetMyerBriggsType()));
+            }
+        }
+
+        [TestMethod()]
+        public void MyerBriggsTeam()
+        {
+            User[] users = new User[] { new User("larorr"), new User("maxim_rachinskiy"), new User("id_237641570"), new User("id182840340"), new User("n0ize34") };
+            
+            using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testMB1.txt", false, System.Text.Encoding.UTF8))
+            {
+                foreach(var user in users)
+                    sw.WriteLine(string.Format("{0} : {1}", user.Link ,user.GetMyerBriggsType()));
             }
         }
 
