@@ -249,30 +249,8 @@ namespace Psychotype_HSE.Models
                                 break;
                         }
                     }
-                    //vkUser = api.Users.Get(new string[] { id }, VkNet.Enums.Filters.ProfileFields.Counters).First();
-                    //if (vkUser.Counters.Groups.HasValue && vkUser.Counters.Groups.Value != 0)
-                    {
-                        s = "";
-                        i = (int) user.VkId;
-
-                        if (i % 2 == 0) s += "I";
-                        else s += "E";
-                        i >>= 1;
-
-                        if (i % 2 == 0) s += "S";
-                        else s += "N";
-                        i >>= 1;
-
-                        if (i % 2 == 0) s += "T";
-                        else s += "F";
-                        i >>= 1;
-
-                        if (i % 2 == 0) s += "J";
-                        else s += "P";
-                        i >>= 1;
-
-                        mayersBriggs = s;
-                    }
+                    
+                    mayersBriggs = user.GetMyerBriggsType();
                 }
                 else
                 {

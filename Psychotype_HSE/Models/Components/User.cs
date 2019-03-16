@@ -56,10 +56,43 @@ namespace Psychotype_HSE.Models.Components
             VkNet.Model.User usr = api.Users.Get(new long[] { VkId }, ProfileFields.All)[0];
             WallGetObject wall;
             //Предпологаю, что проверка на закрытость страницы уже пройдена
-            wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+            try
             {
-                OwnerId = usr.Id
-            });
+                wall = api.Wall.Get(new VkNet.Model.RequestParams.WallGetParams
+                {
+                    OwnerId = usr.Id
+                });
+
+                var posts = wall.WallPosts;
+                int ownPostsCount = 0;
+                int repostsCount = 0;
+                foreach (var post in posts)
+                {
+                    if (post.CopyHistory.Count > 0)
+                        repostsCount++;
+                    else
+                        ownPostsCount++;
+                }
+                x[12] = ownPostsCount;
+                x[13] = repostsCount;
+
+                int sum = 0;
+                foreach (var post in posts)
+                    sum += post.Views?.Count ?? 0;
+                x[14] = sum;
+
+                //19 использовалось как макс. значение при обучении модели
+                x[16] = repostsCount != 0 ? ownPostsCount / repostsCount : 19;
+            }
+            catch (Exception)
+            {
+                x[12] = 0;
+                x[13] = 0;
+                x[14] = 0;
+                x[16] = 19;
+            }
+
+
 
             //is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views
             //0:is_female
@@ -99,27 +132,6 @@ namespace Psychotype_HSE.Models.Components
 
             Regex linkMask = new Regex("id_?[0-9]+");
             x[11] = linkMask.IsMatch(usr.Domain) ? 1 : 0;
-
-            var posts = wall.WallPosts;
-            int ownPostsCount = 0;
-            int repostsCount = 0;
-            foreach (var post in posts)
-            {
-                if (post.CopyHistory.Count > 0)
-                    repostsCount++;
-                else
-                    ownPostsCount++;
-            }
-            x[12] = ownPostsCount;
-            x[13] = repostsCount;
-
-            int sum = 0;
-            foreach (var post in posts)
-                sum += post.Views?.Count ?? 0;
-            x[14] = sum;
-
-            //19 использовалось как макс. значение при обучении модели
-            x[16] = repostsCount != 0 ? ownPostsCount / repostsCount : 19;
 
             UserNumericParams = x;
             return x;
@@ -162,30 +174,6 @@ namespace Psychotype_HSE.Models.Components
             // double[] weights = new double[] {  };
             double[] weights = new double[] { 0.17529813,  0.37443151,  0.16527531, -0.38677119,  0.12411282, -0.12357333, -0.16544805,  0.121947  ,  0.02655503,  0.17872141, 0.18261538,  0.13771823,  0.28387095,  0.0497508 , -0.07209034,  -0.0931934 , -0.04085194, 0.00224221 };
             return LogRegression(weights) > 0.5 ? 'J' : 'P';
-        }
-       
-        /// <summary>     
-        /// Writes a sample of friends for using it in model for bots
-        /// </summary>
-        /// <param name="filePath">Path to .csv file</param>
-        public void GetFriendsForBots(string filePath)
-        {            
-            var api = Api.Get();
-
-            // users = api.Groups.GetMembers(new GroupsGetMembersParams() { GroupId = VkId.ToString(), Fields = UsersFields.All });
-            var users = api.Friends.Get(new FriendsGetParams() { UserId = VkId });
-            //Fully overwrites file 
-
-            using (StreamWriter sw = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
-            {
-                sw.WriteLine("name;surname;is_female;has_photo;fb;inst;twi;sky;friends;followers;groups;pages;subscriptions;photos;user_photo;audios;videos;is_default_link;ownPosts;reposts;views;");
-                foreach (var usr in users)
-                {
-                    WriteUser(sw, usr);
-                }
-                //foreach (var text in texts)
-                sw.WriteLine();
-            }
         }
 
     }
