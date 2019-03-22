@@ -11,6 +11,7 @@
 - Install `python` 3.4+
 - `pip3 install keras`
 - `pip3 install tensorflow`
+- Change paths to working directory and `python.exe` in `AppSettings.cs`
 
 ## Team
 - Maxim Rachinskiy
