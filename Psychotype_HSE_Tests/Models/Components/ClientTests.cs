@@ -67,12 +67,6 @@ namespace Psychotype.Models.Components.Tests
         }
 
         [TestMethod()]
-        public void GetAllPostsTest()
-        {
-            Assert.IsTrue(true);
-        }
-
-        [TestMethod()]
         public void GetMostPopularWordsOnWallTest()
         {
             User user = new User("n0ize34");

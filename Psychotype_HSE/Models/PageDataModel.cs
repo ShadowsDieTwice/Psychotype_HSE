@@ -48,7 +48,6 @@ namespace Psychotype_HSE.Models
         DateTime timeTo = DateTime.Now;
         int numberOfWord = 10;
 
-
         private String id = "";
         private double botProbability = 0;
         private double suicideProbability = 0;
@@ -59,45 +58,21 @@ namespace Psychotype_HSE.Models
         private List<string> description = new List<string>();
         private string mayersBriggs = "";
 
-        public string MayersBriggs
-        {
-            get { return mayersBriggs; }
-        }
+        public string MayersBriggs => mayersBriggs;
 
-        public string FullName
-        {
-            get { return fullName; }
-        }
+        public string FullName => fullName;
 
-        public string PhotoURL
-        {
-            get { return photoURL; }
-        }
+        public string PhotoURL => photoURL;
 
-        public List<string> Description
-        {
-            get { return description; }
-        }
+        public List<string> Description => description;
 
-        public double BotProbability
-        {
-            get { return botProbability; }
-        }
+        public double BotProbability => botProbability;
 
-        public double SuicideProbability
-        {
-            get { return suicideProbability; }
-        }
+        public double SuicideProbability => suicideProbability;
 
-        public bool HasWords
-        {
-            get { return hasWords; }
-        }
+        public bool HasWords => hasWords;
 
-        public PopularWordsAttributes PopularWords
-        {
-            get { return popularWords; }
-        }
+        public PopularWordsAttributes PopularWords => popularWords;
 
         public bool isLinkValid { set; get; }
 
@@ -255,11 +230,10 @@ namespace Psychotype_HSE.Models
         }
 
         Components.User user = new Components.User("");
-        public string raw;
         public PageDataModel() : this("") { }
-        public PageDataModel(string raw_id)
+        public PageDataModel(string rawId)
         {
-            this.Id = raw_id;
+            this.Id = rawId;
         }
     }
 }
