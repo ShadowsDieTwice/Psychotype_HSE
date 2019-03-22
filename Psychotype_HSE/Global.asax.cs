@@ -23,8 +23,6 @@ namespace Psychotype_HSE
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             PythonRunner.RunScript(AppSettings.PythonScriptPath, AppSettings.PythonPath);
-            //,AppSettings.WorkingDir);//, AppSettings.UserPosts);
-            //Database.SetInitializer(new PsyhotypeDbInitializer());
         }
 
         void Application_End(object sender, EventArgs e)

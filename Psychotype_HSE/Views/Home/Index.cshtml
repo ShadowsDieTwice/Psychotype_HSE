@@ -160,7 +160,7 @@
                             @for (int i = 0; i < popularWords.Count; i++)
                             {
                                 Tuple<String, List<String>> item = popularWords[i];
-                                String link = PageDataModel.PopularWordsAtributes.dictLink + item.Item1;
+                                String link = PageDataModel.PopularWordsAttributes.dictLink + item.Item1;
                                 <li>
                                     <span>
                                         <a href="@link">
@@ -171,7 +171,7 @@
                                     <ul>
                                         @foreach (String word in item.Item2)
                                         {
-                                            link = PageDataModel.PopularWordsAtributes.dictLink + word;
+                                            link = PageDataModel.PopularWordsAttributes.dictLink + word;
                                             <li>
                                                 <a href="@link">
                                                     @word

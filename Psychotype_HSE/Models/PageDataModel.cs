@@ -8,7 +8,7 @@ namespace Psychotype_HSE.Models
 {
     public class PageDataModel
     {
-        public class PopularWordsAtributes
+        public class PopularWordsAttributes
         {
             // префикс для получения ссылок на словарь
             public static string dictLink = "https://wiktionary.org/wiki/";
@@ -17,9 +17,9 @@ namespace Psychotype_HSE.Models
 
             public List<int> count = new List<int>();
 
-            public PopularWordsAtributes() { }
+            public PopularWordsAttributes() { }
 
-            public PopularWordsAtributes(Components.User user, DateTime timeFrom,
+            public PopularWordsAttributes(Components.User user, DateTime timeFrom,
                                                 DateTime timeTo, int numberOfWords)
             {
                 List<List<String>> popularWords =
@@ -48,56 +48,31 @@ namespace Psychotype_HSE.Models
         DateTime timeTo = DateTime.Now;
         int numberOfWord = 10;
 
-
         private String id = "";
         private double botProbability = 0;
         private double suicideProbability = 0;
         private bool hasWords = false;
-        private PopularWordsAtributes popularWords = new PopularWordsAtributes();
+        private PopularWordsAttributes popularWords = new PopularWordsAttributes();
         private string fullName = "Имя Фамилия";
         private string photoURL = "https://vk.com/images/camera_200.png?ava=1";
         private List<string> description = new List<string>();
         private string mayersBriggs = "";
 
-        public string MayersBriggs
-        {
-            get { return mayersBriggs; }
-        }
+        public string MayersBriggs => mayersBriggs;
 
-        public string FullName
-        {
-            get { return fullName; }
-        }
+        public string FullName => fullName;
 
-        public string PhotoURL
-        {
-            get { return photoURL; }
-        }
+        public string PhotoURL => photoURL;
 
-        public List<string> Description
-        {
-            get { return description; }
-        }
+        public List<string> Description => description;
 
-        public double BotProbability
-        {
-            get { return botProbability; }
-        }
+        public double BotProbability => botProbability;
 
-        public double SuicideProbability
-        {
-            get { return suicideProbability; }
-        }
+        public double SuicideProbability => suicideProbability;
 
-        public bool HasWords
-        {
-            get { return hasWords; }
-        }
+        public bool HasWords => hasWords;
 
-        public PopularWordsAtributes PopularWords
-        {
-            get { return popularWords; }
-        }
+        public PopularWordsAttributes PopularWords => popularWords;
 
         public bool isLinkValid { set; get; }
 
@@ -106,16 +81,15 @@ namespace Psychotype_HSE.Models
             get { return id; }
             set
             {
-                string[] splitedId;
-                var api = Api.Get();
+	            var api = Api.Get();
                 VkNet.Model.User vkUser = new VkNet.Model.User();
 
                 isLinkValid = false;
 
                 if (value != null)
                 {
-                    splitedId = value.Split('/');
-                    id = splitedId[splitedId.Length - 1];
+	                var splitedId = value.Split('/');
+	                id = splitedId[splitedId.Length - 1];
                 }
                 else id = "";
 
@@ -146,7 +120,7 @@ namespace Psychotype_HSE.Models
                     int i = 0;
 
                     // Get most frequent words
-                    popularWords = new PopularWordsAtributes(user, timeFrom, timeTo, numberOfWord);
+                    popularWords = new PopularWordsAttributes(user, timeFrom, timeTo, numberOfWord);
 
                     // Predict suicide probability
                     suicideProbability = user.SuicideProbability(timeFrom, timeTo, id);
@@ -247,20 +221,19 @@ namespace Psychotype_HSE.Models
                 }
                 else
                 {
-                    popularWords = new PopularWordsAtributes();
+                    popularWords = new PopularWordsAttributes();
                     suicideProbability = 0;
                 }
 
-                hasWords = !(popularWords.response.Count == 0);
+                hasWords = popularWords.response.Count != 0;
             }
         }
 
         Components.User user = new Components.User("");
-        public string raw;
         public PageDataModel() : this("") { }
-        public PageDataModel(string raw_id)
+        public PageDataModel(string rawId)
         {
-            this.Id = raw_id;
+            this.Id = rawId;
         }
     }
 }

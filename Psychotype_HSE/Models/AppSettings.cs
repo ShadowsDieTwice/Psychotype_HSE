@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Web;
 
 namespace Psychotype_HSE.Models
 {
@@ -21,29 +23,22 @@ namespace Psychotype_HSE.Models
         /// Path to python model script 
         /// </summary>
         public static string PythonScriptPath { get; set; }
+		/// <summary>
+		/// Full path to 'python.exe'
+		/// Example: 'C:\Users\User\AppData\Local\Programs\Python\Python36\python.exe'
+		/// </summary>
+		public static string PythonPath { get; set; }
+		/// <summary>
+		/// Full path to '~/Util/Scripts' directory
+		/// Example: 'C:\Psychotype_HSE\Psychotype_HSE\Util\Scripts\'
+		/// </summary>
+		public static string WorkingDir { get; set; }
         /// <summary>
-        /// Path to python interpreter (in a way...)
-        /// </summary>
-        public static string PythonPath { get; set; }
-        /// <summary>
-        /// Path to suicide_predict.csv (data for suicideScript.py)
-        /// </summary>
-        public static string UserPosts { get; set; }
-        /// <summary>
-        /// Result of suicide prediction by python script
-        /// </summary>
-        public static string SuicideResult { get; set; }
-        /// <summary>
-        /// Directory where python script searches for text input (id.csv)
-        /// and leaves probobilities (id.txt).
-        /// </summary>
-        public static string WorkingDir { get; set; }
-        /// <summary>
-        /// Port on localhost, that make predictions about sucide.
+        /// Port on localhost, that make predictions about suicide.
         /// </summary>
         public static int ClientPort { get; set; }
         /// <summary>
-        /// IPv4 adress of curent machine
+        /// IPv4 address of current machine
         /// </summary>
         public static IPAddress LocalIP { get; set; }
         /// <summary>
@@ -62,11 +57,11 @@ namespace Psychotype_HSE.Models
             Password = "16032019GD";
             PythonScriptPath = @"suicideScript.py";
 
-            PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
-            WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\";
-            ClientPort = 1111;
+            PythonPath = @"PYTHON_PATH";
+            WorkingDir = @"PATH_TO_~/Util/Scripts/";
+			ClientPort = 1111;
 
-            // recive local ip adress
+            // receive local ip address
             foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)

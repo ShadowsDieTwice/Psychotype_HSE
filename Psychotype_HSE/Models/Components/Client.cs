@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Text;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using VkNet.Model.RequestParams;
@@ -76,9 +75,7 @@ namespace Psychotype_HSE.Models.Components
         public virtual List<Post> GetAllPosts(DateTime timeFrom, DateTime timeTo)
         {
             List<Post> curPosts = new List<Post>();
-            Thread.Sleep(300);
-            WallGetParams wallParams = new WallGetParams();
-            wallParams.OwnerId = VkId;
+            WallGetParams wallParams = new WallGetParams {OwnerId = VkId};
             try
             {
                 WallGetObject wall = Api.Get().Wall.Get(wallParams, true);
@@ -104,7 +101,7 @@ namespace Psychotype_HSE.Models.Components
         }
 
         /// <summary>
-        /// Сalculates resulting suicide probability 
+        /// Calculates resulting suicide probability 
         /// </summary>
         /// <param name="timeFrom">Earliest post date</param>
         /// <param name="timeTo">Latest post date</param>
@@ -134,15 +131,15 @@ namespace Psychotype_HSE.Models.Components
                 request = $" {request.Length}::" + request;
                 Byte[] bytesSent = Encoding.UTF32.GetBytes(request);
                 Byte[] bytesReceived = new Byte[256];
-                string responce = "";
+                string response = "";
                 socket.Send(bytesSent, bytesSent.Length, 0);
 
                 // получаем результат
                 int bytes = socket.Receive(bytesReceived, bytesReceived.Length, 0);
-                responce = Encoding.UTF8.GetString(bytesReceived, 0, bytes);
+                response = Encoding.UTF8.GetString(bytesReceived, 0, bytes);
                 List<double> probs = new List<double>();
 
-                foreach (string prob in responce.Split('\n'))
+                foreach (string prob in response.Split('\n'))
                 {
                     try
                     {
@@ -157,36 +154,15 @@ namespace Psychotype_HSE.Models.Components
                     }
                 }
 
-                double result = 0,
-                    normalizer = 0, //Sum of weights
-                    w;
-                for (int i = 0; i < probs.Count; i++)
-                {
-                    w = PostWeight(posts[i]);
-                    result += probs[i] * w;
-                    normalizer += w;
-                }
-                if (normalizer == 0)
-                    return 0;
+                if (probs.Count == 0)
+	                return 0;
 
                 socket.Close();
 
-                return result / normalizer;
+                return probs.Sum() / probs.Count;
             }
 
             return 0;
-        }
-
-        /// <summary>
-        /// Weight of the post that depends on its date
-        /// </summary>
-        public virtual double PostWeight(Post post)
-        {
-            //difference in days
-            if (post.Text == "")
-                return 0;
-            TimeSpan span = DateTime.Now - post.Date.Value;
-            return 1 / Math.Log(span.TotalDays);
         }
 
         /// <summary>
