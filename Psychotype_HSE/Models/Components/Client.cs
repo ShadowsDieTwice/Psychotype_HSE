@@ -154,35 +154,15 @@ namespace Psychotype_HSE.Models.Components
                     }
                 }
 
-                double result = 0,
-                    normalizer = 0;
-                for (int i = 0; i < probs.Count; i++)
-                {
-                    var w = PostWeight(posts[i]);
-                    result += probs[i] * w;
-                    normalizer += w;
-                }
-                if (normalizer == 0)
-                    return 0;
+                if (probs.Count == 0)
+	                return 0;
 
                 socket.Close();
 
-                return result / normalizer;
+                return probs.Sum() / probs.Count;
             }
 
             return 0;
-        }
-
-        /// <summary>
-        /// Weight of the post that depends on its date
-        /// </summary>
-        public virtual double PostWeight(Post post)
-        {
-            //difference in days
-            if (post.Text == "")
-                return 0;
-            TimeSpan span = DateTime.Now - post.Date.Value;
-            return 1 / Math.Log(span.TotalDays);
         }
 
         /// <summary>
