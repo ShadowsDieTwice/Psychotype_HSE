@@ -10,7 +10,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>PHSE'19</title>
     <style type="text/css">
         @@font-face {
             font-family: Molot;
@@ -154,7 +154,7 @@
 
                     if (Model.HasWords)
                     {
-                        <h4>Самые популярные однокоренные слова в порядке их появления на странице:</h4>
+                        <h4>Самые популярные однокоренные слова на странице:</h4>
                         List<Tuple<String, List<String>>> popularWords = Model.PopularWords.response;
                         <ol>
                             @for (int i = 0; i < popularWords.Count; i++)
