@@ -35,14 +35,14 @@ namespace Psychotype.Models.Components.Tests
         [TestMethod()]
         [ExpectedException(typeof(NullReferenceException),
         "There is no page with link: net_takogo_pablica_i_ya_nadeyus_ne_budet_123")]
-        public void GetIdFromLinkTestNullExeption()
+        public void GetIdFromLinkTestNullException()
         {
             //Throws NullReferenceException
             Client cl = new Community("net_takogo_pablica_i_ya_nadeyus_ne_budet_123");
         }
         
         [TestMethod()]
-        public void SuisideProbability()
+        public void SuicideProbability()
         {
             //this test is correct with default suicide_result if he still has only 2 posts
             

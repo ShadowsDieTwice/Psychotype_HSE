@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -26,24 +27,16 @@ namespace Psychotype_HSE.Models
         /// </summary>
         public static string PythonPath { get; set; }
         /// <summary>
-        /// Path to suicide_predict.csv (data for suicideScript.py)
-        /// </summary>
-        public static string UserPosts { get; set; }
-        /// <summary>
-        /// Result of suicide prediction by python script
-        /// </summary>
-        public static string SuicideResult { get; set; }
-        /// <summary>
         /// Directory where python script searches for text input (id.csv)
-        /// and leaves probobilities (id.txt).
+        /// and leaves probabilities (id.txt).
         /// </summary>
         public static string WorkingDir { get; set; }
         /// <summary>
-        /// Port on localhost, that make predictions about sucide.
+        /// Port on localhost, that make predictions about suicide.
         /// </summary>
         public static int ClientPort { get; set; }
         /// <summary>
-        /// IPv4 adress of curent machine
+        /// IPv4 address of current machine
         /// </summary>
         public static IPAddress LocalIP { get; set; }
         /// <summary>
@@ -62,11 +55,11 @@ namespace Psychotype_HSE.Models
             Password = "16032019GD";
             PythonScriptPath = @"suicideScript.py";
 
-            PythonPath = @"C:\ProgramData\Anaconda3\python.exe";
-            WorkingDir = @"C:\Users\1\Source\Repos\myrachins\Psychotype_HSE_v2\Psychotype_HSE\";
-            ClientPort = 1111;
+            PythonPath = @"YOUR_PYTHON_PATH";
+            WorkingDir = @"DIRECTORY_TO_EXECUTABLE_PROJECT";
+			ClientPort = 1111;
 
-            // recive local ip adress
+            // receive local ip address
             foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)

@@ -87,7 +87,6 @@
   <ItemGroup>
     <Compile Include="Models\ApiTests.cs" />
     <Compile Include="Models\Components\ClientTests.cs" />
-    <Compile Include="Models\Components\CommunityTests.cs" />
     <Compile Include="Models\Components\UserTests.cs" />
     <Compile Include="Models\PsychotypeContextTests.cs" />
     <Compile Include="Models\StemmerTest.cs" />

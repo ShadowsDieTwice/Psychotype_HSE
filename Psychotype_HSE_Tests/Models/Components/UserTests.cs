@@ -44,24 +44,10 @@ namespace Psychotype_HSE_Tests.Models.Components
         }
 
         [TestMethod()]
-        public void TestBot5()
-        {
-            //User user = new User("maxim_rachinskiy");  //Maxim           
-            //using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testBot.txt", false, System.Text.Encoding.UTF8))
-            //{
-            //    sw.WriteLine(string.Format("{0}", user.IsBot()));
-            //}
-        }
-
-        [TestMethod()]
         public void MyerBriggs1()
         {           
             User user = new User("larorr");
             Console.WriteLine(string.Format("{0}", user.GetMyerBriggsType()));
-            //using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testMB1.txt", false, System.Text.Encoding.UTF8))
-            //{
-            //    //sw.WriteLine(string.Format("{0}", user.GetMyerBriggsType()));
-            //}
         }
 
         [TestMethod()]
@@ -71,11 +57,6 @@ namespace Psychotype_HSE_Tests.Models.Components
 
             foreach (var user in users)
                 Console.WriteLine("{0} : {1}", user.Link, user.GetMyerBriggsType());
-            //using (StreamWriter sw = new StreamWriter(@"D:\Documents\LARDocs\HSE\GroupDynamics\DataBases\testMB1.txt", false, System.Text.Encoding.UTF8))
-            //{
-            //    foreach(var user in users)
-            //        sw.WriteLine(string.Format("{0} : {1}", user.Link ,user.GetMyerBriggsType()));
-            //}
         }
 
     }
